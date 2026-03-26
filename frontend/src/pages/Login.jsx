@@ -15,7 +15,12 @@ export default function Login(){
 
   const res = await axios.post(
    "https://khatabook-mern-app.onrender.com/api/auth/login",
-   {email,password}
+   {email,password},
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  }
   )
 
   localStorage.setItem("token",res.data.token)
