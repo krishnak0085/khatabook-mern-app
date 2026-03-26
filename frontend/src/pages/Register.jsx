@@ -15,7 +15,7 @@ export default function Register(){
   e.preventDefault()
 
   await axios.post(
-   "http://localhost:5000/api/auth/register",
+   "https://khatabook-mern-app.onrender.com/api/auth/register",
    {name,email,password}
   )
 
