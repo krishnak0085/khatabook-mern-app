@@ -16,7 +16,12 @@ export default function Register(){
 
   await axios.post(
    "https://khatabook-mern-app.onrender.com/api/auth/register",
-   {name,email,password}
+   {name,email,password},
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  }
   )
 
   navigate("/")
