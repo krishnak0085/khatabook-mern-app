@@ -13,7 +13,12 @@ export default function Dashboard(){
  const loadCustomers = async()=>{
 try {
   const res = await axios.get(
-   "https://khatabook-mern-app.onrender.com/api/customers"
+   "https://khatabook-mern-app.onrender.com/api/customers",
+  {
+    headers: {
+      Authorization: localStorage.getItem("token")
+    }
+  }
   )
   setCustomers(res.data)
 }
@@ -32,7 +37,12 @@ const addCustomer = async()=>{
 
   await axios.post(
    "https://khatabook-mern-app.onrender.com/api/customers",
-   {name,phone}
+   {name,phone},
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  }
   )
 
   setName("")
@@ -50,7 +60,12 @@ const deleteCustomer = async(id)=>{
 
  try{
   await axios.delete(
-   `https://khatabook-mern-app.onrender.com/api/customers/${id}`
+   `https://khatabook-mern-app.onrender.com/api/customers/${id}`,
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  }
   )
 
   loadCustomers()
