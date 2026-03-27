@@ -54,7 +54,7 @@ const loadCustomer = async()=>{
  try{
 
  const res = await axios.get(
-  `http://localhost:5000/api/customers/${id}`
+  `https://khatabook-mern-app.onrender.com/api/customers/${id}`
  )
 
  setCustomer(res.data)
@@ -72,7 +72,7 @@ const loadTransactions = async()=>{
  setLoading(true)
 
  const res = await axios.get(
-  `http://localhost:5000/api/transactions/${id}`
+  `https://khatabook-mern-app.onrender.com/api/transactions/${id}`
  )
 
  const sorted = res.data.sort(
@@ -103,7 +103,7 @@ const addTransaction = async()=>{
  try{
 
  await axios.post(
-  "http://localhost:5000/api/transactions",
+  "https://khatabook-mern-app.onrender.com/api/transactions",
   {
    customerId:id,
    amount:Number(amount),
@@ -136,7 +136,7 @@ const deleteTransaction = async(tid)=>{
  try{
 
  await axios.delete(
-  `http://localhost:5000/api/transactions/${tid}`
+  `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`
  )
 
  loadTransactions()
