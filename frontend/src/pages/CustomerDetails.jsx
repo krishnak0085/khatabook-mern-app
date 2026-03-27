@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
-import * as XLSX from "xlsx"
+//import * as XLSX from "xlsx"
 import { saveAs } from "file-saver"
 
 export default function CustomerDetails(){
@@ -240,34 +240,34 @@ const clearFilters = ()=>{
 // EXPORT EXCEL
 // =========================
 
-const exportExcel = ()=>{
+// const exportExcel = ()=>{
 
- const sheet = XLSX.utils.json_to_sheet(transactions)
+//  const sheet = XLSX.utils.json_to_sheet(transactions)
 
- const book = XLSX.utils.book_new()
+//  const book = XLSX.utils.book_new()
 
- XLSX.utils.book_append_sheet(
-  book,
-  sheet,
-  "Ledger"
- )
+//  XLSX.utils.book_append_sheet(
+//   book,
+//   sheet,
+//   "Ledger"
+//  )
 
- const buffer = XLSX.write(
-  book,
-  {bookType:"xlsx",type:"array"}
- )
+//  const buffer = XLSX.write(
+//   book,
+//   {bookType:"xlsx",type:"array"}
+//  )
 
- const data = new Blob(
-  [buffer],
-  {type:"application/octet-stream"}
- )
+//  const data = new Blob(
+//   [buffer],
+//   {type:"application/octet-stream"}
+//  )
 
- saveAs(
-  data,
-  `${customer?.name}-ledger.xlsx`
- )
+//  saveAs(
+//   data,
+//   `${customer?.name}-ledger.xlsx`
+//  )
 
-}
+// }
 
 // =========================
 // PDF GENERATION
@@ -441,7 +441,7 @@ link.click()
 // WHATSAPP MESSAGE
 // ==========================
 
-const phone = "91XXXXXXXXXX" // your number
+const phone = "918053338585" // your number
 
 const message =
 `Ledger Statement for ${customer.name}
@@ -462,7 +462,7 @@ window.open(
  //  `https://wa.me/?text=${encodeURIComponent(msg)}`,
  //  "_blank"
  // )
-}
+// }
 // =========================
 // WHATSAPP SHARE
 // =========================
