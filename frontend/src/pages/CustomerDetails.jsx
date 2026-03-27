@@ -417,14 +417,14 @@ const generatePDF = (limit) => {
 
  // SAVE PDF
  doc.save(`${customer.name}-statement.pdf`)
-
+ return doc
  // WHATSAPP SHARE
- const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
+ // const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
 
- window.open(
-  `https://wa.me/?text=${encodeURIComponent(msg)}`,
-  "_blank"
- )
+ // window.open(
+ //  `https://wa.me/?text=${encodeURIComponent(msg)}`,
+ //  "_blank"
+ // )
 }
 // =========================
 // WHATSAPP SHARE
