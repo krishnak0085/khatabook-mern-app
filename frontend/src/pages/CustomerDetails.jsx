@@ -419,45 +419,45 @@ const generatePDF = (limit) => {
  doc.save(`${customer.name}-statement.pdf`)
 
  // WHATSAPP SHARE
- const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
+// const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
 
- window.open(
-  `https://wa.me/?text=${encodeURIComponent(msg)}`,
-  "_blank"
- )
+ // window.open(
+ //  `https://wa.me/?text=${encodeURIComponent(msg)}`,
+ //  "_blank"
+ // )
 }
 // =========================
 // WHATSAPP SHARE
 // =========================
 
-const shareWhatsApp = () => {
+// const shareWhatsApp = () => {
 
- if(!customer) return
+//  if(!customer) return
 
- const doc = generatePDF()
+//  const doc = generatePDF()
 
- const pdfBlob = doc.output("blob")
+//  const pdfBlob = doc.output("blob")
 
- const file = new File(
-  [pdfBlob],
-  `${customer.name}-statement.pdf`,
-  { type: "application/pdf" }
- )
+//  const file = new File(
+//   [pdfBlob],
+//   `${customer.name}-statement.pdf`,
+//   { type: "application/pdf" }
+//  )
 
- const url = URL.createObjectURL(file)
+//  const url = URL.createObjectURL(file)
 
- const msg =
- `Ledger statement for ${customer.name}.
- Please download the PDF from the link below:
+//  const msg =
+//  `Ledger statement for ${customer.name}.
+//  Please download the PDF from the link below:
 
- ${url}`
+//  ${url}`
 
- window.open(
-  `https://wa.me/?text=${encodeURIComponent(msg)}`,
-  "_blank"
- )
+//  window.open(
+//   `https://wa.me/?text=${encodeURIComponent(msg)}`,
+//   "_blank"
+//  )
 
-}
+// }
 // =========================
 // UI
 // =========================
