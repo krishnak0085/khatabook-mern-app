@@ -1,18 +1,16 @@
 const router = require("express").Router()
 const Customer = require("../models/Customer")
 const Transaction = require("../models/Transaction")
-const auth = require("../middleware/auth")
 
-//AUTH CUSTOMER
-router.post("/", auth, async (req,res)=>{
+// ADD CUSTOMER
+router.post("/", async (req,res)=>{
  try{
 
   const { name, phone } = req.body
 
   const customer = new Customer({
    name,
-   phone,
-   userId:req.userId
+   phone
   })
 
   await customer.save()
@@ -23,16 +21,13 @@ router.post("/", auth, async (req,res)=>{
   res.status(500).json({error:err.message})
  }
 })
+
+
 // GET CUSTOMERS WITH BALANCE
-router.get("/", auth, async (req,res)=>{
+router.get("/", async (req,res)=>{
  try{
 
   const customers = await Customer.aggregate([
-
-   {
-    $match:{ userId:req.userId }
-   },
-
    {
     $lookup:{
      from:"transactions",
@@ -41,7 +36,6 @@ router.get("/", auth, async (req,res)=>{
      as:"transactions"
     }
    },
-
    {
     $addFields:{
      balance:{
@@ -61,7 +55,6 @@ router.get("/", auth, async (req,res)=>{
      }
     }
    }
-
   ])
 
   res.json(customers)
@@ -70,14 +63,11 @@ router.get("/", auth, async (req,res)=>{
   res.status(500).json({error:err.message})
  }
 })
-//GET SINGLE CUSTOMER
-router.get("/:id", auth, async (req,res)=>{
+// GET SINGLE CUSTOMER
+router.get("/:id", async (req,res)=>{
  try{
 
-  const customer = await Customer.findOne({
-   _id:req.params.id,
-   userId:req.userId
-  })
+  const customer = await Customer.findById(req.params.id)
 
   if(!customer){
    return res.status(404).json({message:"Customer not found"})
@@ -91,16 +81,13 @@ router.get("/:id", auth, async (req,res)=>{
 })
 
 // DELETE CUSTOMER
-router.delete("/:id",auth, async (req,res)=>{
+router.delete("/:id", async (req,res)=>{
  try{
 
-  await Customer.DeleteOne({
-   _id:req.params.id,
-   userId:req.userId})
+  await Customer.findByIdAndDelete(req.params.id)
 
   await Transaction.deleteMany({
-   customerId: req.params.id,
-   userId:req.userId
+   customerId: req.params.id
   })
 
   res.json({message:"Customer deleted"})
