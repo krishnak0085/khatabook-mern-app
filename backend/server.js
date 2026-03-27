@@ -14,6 +14,12 @@ app.use(express.json())
 app.get("/", (req,res)=>{
  res.send("Backend running")
 })
+// Health route for cronjob
+app.get("/api/health",(req,res)=>{
+ res.send("Server alive")
+})
+
+
 mongoose.connect("mongodb+srv://krishnagupta85com_db_user:PGpSdy23Xicxg5TE@cluster0.k10xs65.mongodb.net/khatabook")
 .then(()=>console.log("MongoDB connected"))
 .catch(err=>console.log(err))
