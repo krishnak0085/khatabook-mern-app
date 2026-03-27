@@ -416,8 +416,45 @@ const generatePDF = (limit) => {
  }
 
  // SAVE PDF
- doc.save(`${customer.name}-statement.pdf`)
+ // ==========================
+// GENERATE PDF BLOB
+// ==========================
 
+const pdfBlob = doc.output("blob")
+
+const file = new File(
+ [pdfBlob],
+ `${customer.name}-statement.pdf`,
+ { type: "application/pdf" }
+)
+
+// CREATE TEMP LINK
+const pdfUrl = URL.createObjectURL(file)
+
+// AUTO DOWNLOAD
+const link = document.createElement("a")
+link.href = pdfUrl
+link.download = `${customer.name}-statement.pdf`
+link.click()
+
+// ==========================
+// WHATSAPP MESSAGE
+// ==========================
+
+const phone = "91XXXXXXXXXX" // your number
+
+const message =
+`Ledger Statement for ${customer.name}
+
+Entries: ${data.length}
+
+Download PDF:
+${pdfUrl}`
+
+window.open(
+ `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+ "_blank"
+)
  // WHATSAPP SHARE
 // const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
 
@@ -568,7 +605,7 @@ onChange={(e)=>{
 
 {/* TOOLS */}
 
-<div className="flex flex-wrap gap-2 mb-4">
+{/* <div className="flex flex-wrap gap-2 mb-4">
 
 
 
@@ -580,7 +617,7 @@ className="bg-green-700 text-white px-4 py-2 rounded"
 Share WhatsApp
 </button>
 
-</div>
+</div> */}
 
 {/* SEARCH */}
 
