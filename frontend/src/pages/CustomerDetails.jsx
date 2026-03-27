@@ -54,13 +54,7 @@ const loadCustomer = async()=>{
  try{
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/customers/${id}`,
-  {
-    headers: {
-      Authorization: localStorage.getItem("token")
-    }
-  }
-
+  `https://khatabook-mern-app.onrender.com/api/customers/${id}`
  )
 
  setCustomer(res.data)
@@ -78,12 +72,7 @@ const loadTransactions = async()=>{
  setLoading(true)
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/transactions/${id}`,
-  {
-    headers: {
-      Authorization: localStorage.getItem("token")
-    }
-  }
+  `https://khatabook-mern-app.onrender.com/api/transactions/${id}`
  )
 
  const sorted = res.data.sort(
@@ -121,11 +110,6 @@ const addTransaction = async()=>{
    type,
    description,
    method:"cash"
-  },
-  {
-    headers: {
-      Authorization: localStorage.getItem("token")
-    }
   }
  )
 
@@ -152,12 +136,7 @@ const deleteTransaction = async(tid)=>{
  try{
 
  await axios.delete(
-  `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`,
-  {
-    headers: {
-      Authorization: localStorage.getItem("token")
-    }
-  }
+  `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`
  )
 
  loadTransactions()
