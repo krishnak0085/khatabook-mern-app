@@ -20,7 +20,7 @@ app.get("/api/health",(req,res)=>{
 })
 
 
-mongoose.connect("mongodb+srv://krishnagupta85com_db_user:PGpSdy23Xicxg5TE@cluster0.k10xs65.mongodb.net/khatabook")
+mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("MongoDB connected"))
 .catch(err=>console.log(err))
 app.use("/api/auth", authRoutes)
