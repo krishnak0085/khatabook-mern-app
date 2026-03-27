@@ -455,6 +455,7 @@ window.open(
  `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
  "_blank"
 )
+}
  // WHATSAPP SHARE
 // const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
 
