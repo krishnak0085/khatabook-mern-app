@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
-//import * as XLSX from "xlsx"
+import * as XLSX from "xlsx"
 import { saveAs } from "file-saver"
 
 export default function CustomerDetails(){
@@ -54,7 +54,7 @@ const loadCustomer = async()=>{
  try{
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/customers/${id}`
+  `http://localhost:5000/api/customers/${id}`
  )
 
  setCustomer(res.data)
@@ -72,7 +72,7 @@ const loadTransactions = async()=>{
  setLoading(true)
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/transactions/${id}`
+  `http://localhost:5000/api/transactions/${id}`
  )
 
  const sorted = res.data.sort(
@@ -103,7 +103,7 @@ const addTransaction = async()=>{
  try{
 
  await axios.post(
-  "https://khatabook-mern-app.onrender.com/api/transactions",
+  "http://localhost:5000/api/transactions",
   {
    customerId:id,
    amount:Number(amount),
@@ -136,7 +136,7 @@ const deleteTransaction = async(tid)=>{
  try{
 
  await axios.delete(
-  `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`
+  `http://localhost:5000/api/transactions/${tid}`
  )
 
  loadTransactions()
@@ -240,34 +240,34 @@ const clearFilters = ()=>{
 // EXPORT EXCEL
 // =========================
 
-// const exportExcel = ()=>{
+const exportExcel = ()=>{
 
-//  const sheet = XLSX.utils.json_to_sheet(transactions)
+ const sheet = XLSX.utils.json_to_sheet(transactions)
 
-//  const book = XLSX.utils.book_new()
+ const book = XLSX.utils.book_new()
 
-//  XLSX.utils.book_append_sheet(
-//   book,
-//   sheet,
-//   "Ledger"
-//  )
+ XLSX.utils.book_append_sheet(
+  book,
+  sheet,
+  "Ledger"
+ )
 
-//  const buffer = XLSX.write(
-//   book,
-//   {bookType:"xlsx",type:"array"}
-//  )
+ const buffer = XLSX.write(
+  book,
+  {bookType:"xlsx",type:"array"}
+ )
 
-//  const data = new Blob(
-//   [buffer],
-//   {type:"application/octet-stream"}
-//  )
+ const data = new Blob(
+  [buffer],
+  {type:"application/octet-stream"}
+ )
 
-//  saveAs(
-//   data,
-//   `${customer?.name}-ledger.xlsx`
-//  )
+ saveAs(
+  data,
+  `${customer?.name}-ledger.xlsx`
+ )
 
-// }
+}
 
 // =========================
 // PDF GENERATION
@@ -416,86 +416,48 @@ const generatePDF = (limit) => {
  }
 
  // SAVE PDF
- // ==========================
-// GENERATE PDF BLOB
-// ==========================
+ doc.save(`${customer.name}-statement.pdf`)
 
-const pdfBlob = doc.output("blob")
-
-const file = new File(
- [pdfBlob],
- `${customer.name}-statement.pdf`,
- { type: "application/pdf" }
-)
-
-// CREATE TEMP LINK
-const pdfUrl = URL.createObjectURL(file)
-
-// AUTO DOWNLOAD
-const link = document.createElement("a")
-link.href = pdfUrl
-link.download = `${customer.name}-statement.pdf`
-link.click()
-
-// ==========================
-// WHATSAPP MESSAGE
-// ==========================
-
-const phone = "918053338585" // your number
-
-const message =
-`Ledger Statement for ${customer.name}
-
-Entries: ${data.length}
-
-Download PDF:
-${pdfUrl}`
-
-window.open(
- `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
- "_blank"
-)
-}
  // WHATSAPP SHARE
-// const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
+ const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
 
- // window.open(
- //  `https://wa.me/?text=${encodeURIComponent(msg)}`,
- //  "_blank"
- // )
-// }
+ window.open(
+  `https://wa.me/?text=${encodeURIComponent(msg)}`,
+  "_blank"
+ )
+}
 // =========================
 // WHATSAPP SHARE
 // =========================
 
-// const shareWhatsApp = () => {
+const shareWhatsApp = () => {
 
-//  if(!customer) return
+ if(!customer) return
 
-//  const doc = generatePDF()
+ const doc = generatePDF()
 
-//  const pdfBlob = doc.output("blob")
+ const pdfBlob = doc.output("blob")
 
-//  const file = new File(
-//   [pdfBlob],
-//   `${customer.name}-statement.pdf`,
-//   { type: "application/pdf" }
-//  )
+ const file = new File(
+  [pdfBlob],
+  `${customer.name}-statement.pdf`,
+  { type: "application/pdf" }
+ )
 
-//  const url = URL.createObjectURL(file)
+ const url = URL.createObjectURL(file)
 
-//  const msg =
-//  `Ledger statement for ${customer.name}.
-//  Please download the PDF from the link below:
+ const msg =
+ `Ledger statement for ${customer.name}.
+ Please download the PDF from the link below:
 
-//  ${url}`
+ ${url}`
 
-//  window.open(
-//   `https://wa.me/?text=${encodeURIComponent(msg)}`,
-//   "_blank"
-//  )
+ window.open(
+  `https://wa.me/?text=${encodeURIComponent(msg)}`,
+  "_blank"
+ )
 
-// }
+}
 // =========================
 // UI
 // =========================
@@ -606,7 +568,7 @@ onChange={(e)=>{
 
 {/* TOOLS */}
 
-{/* <div className="flex flex-wrap gap-2 mb-4">
+<div className="flex flex-wrap gap-2 mb-4">
 
 
 
@@ -618,7 +580,7 @@ className="bg-green-700 text-white px-4 py-2 rounded"
 Share WhatsApp
 </button>
 
-</div> */}
+</div>
 
 {/* SEARCH */}
 
