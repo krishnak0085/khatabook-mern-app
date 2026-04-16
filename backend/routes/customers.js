@@ -25,7 +25,7 @@ const customer = new Customer({
 
 
 // GET CUSTOMERS WITH BALANCE
-router.get("/:userId", async (req,res)=>{
+router.get("/user/:userId", async (req,res)=>{
  try{
 
   const customers = await Customer.aggregate([
@@ -76,9 +76,10 @@ router.get("/:userId", async (req,res)=>{
 // GET SINGLE CUSTOMER
 router.get("/:id", async (req,res)=>{
  try{
-
-  const customer = await Customer.findById(req.params.id)
-
+const customer = await Customer.findOne({
+ _id:req.params.id,
+ userId:req.query.userId
+})
   if(!customer){
    return res.status(404).json({message:"Customer not found"})
   }
