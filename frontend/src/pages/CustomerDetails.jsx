@@ -28,7 +28,7 @@ const [error,setError] = useState("")
 const [amount,setAmount] = useState("")
 const [type,setType] = useState("credit")
 const [description,setDescription] = useState("")
-
+const userId = localStorage.getItem("userId")
 // SEARCH
 const [search,setSearch] = useState("")
 
@@ -72,8 +72,8 @@ const loadTransactions = async()=>{
  setLoading(true)
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/transactions/${id}`
- )
+ `https://khatabook-mern-app.onrender.com/api/transactions/${id}/${userId}`
+)
 
  const sorted = res.data.sort(
   (a,b)=> new Date(a.date) - new Date(b.date)
@@ -102,16 +102,17 @@ const addTransaction = async()=>{
 
  try{
 
- await axios.post(
-  "https://khatabook-mern-app.onrender.com/api/transactions",
-  {
-   customerId:id,
-   amount:Number(amount),
-   type,
-   description,
-   method:"cash"
-  }
- )
+await axios.post(
+ "https://khatabook-mern-app.onrender.com/api/transactions",
+ {
+  customerId:id,
+  amount:Number(amount),
+  type,
+  description,
+  method:"cash",
+  userId
+ }
+)
 
  setAmount("")
  setDescription("")
@@ -135,9 +136,12 @@ const deleteTransaction = async(tid)=>{
 
  try{
 
- await axios.delete(
-  `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`
- )
+await axios.delete(
+ `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`,
+ {
+  data:{ userId }
+ }
+)
 
  loadTransactions()
 
