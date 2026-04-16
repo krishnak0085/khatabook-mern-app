@@ -18,8 +18,14 @@ export default function Login(){
    {email,password}
   )
 
-  localStorage.setItem("token",res.data.token)
+const token = res.data.token
 
+// Decode token to get userId
+const payload = JSON.parse(atob(token.split(".")[1]))
+
+localStorage.setItem("token",token)
+localStorage.setItem("userId",payload.id)
+  
   navigate("/dashboard")
  }
 
