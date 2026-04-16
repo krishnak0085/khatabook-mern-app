@@ -12,3 +12,4 @@ const customerSchema = new mongoose.Schema({
  phone:String
 
 })
+module.exports = mongoose.model("Customer", customerSchema)
