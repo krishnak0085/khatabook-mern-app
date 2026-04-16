@@ -9,12 +9,12 @@ export default function Dashboard(){
  const [customers,setCustomers] = useState([])
  const [name,setName] = useState("")
  const [phone,setPhone] = useState("")
-
+ const userId = localStorage.getItem("userId")
  const loadCustomers = async()=>{
 try {
   const res = await axios.get(
-   "https://khatabook-mern-app.onrender.com/api/customers"
-  )
+ `https://khatabook-mern-app.onrender.com/api/customers/${userId}`
+)
   setCustomers(res.data)
 }
   catch (error) {
@@ -23,18 +23,28 @@ try {
  }
 }
 
- useEffect(()=>{
-  loadCustomers()
- },[])
+useEffect(()=>{
+
+ if(!userId){
+  navigate("/")
+  return
+ }
+
+ loadCustomers()
+
+},[])
 
 const addCustomer = async()=>{
+  if(!name){
+  alert("Enter customer name")
+  return
+
  try{
 
-  await axios.post(
-   "https://khatabook-mern-app.onrender.com/api/customers",
-   {name,phone}
-  )
-
+ await axios.post(
+ "https://khatabook-mern-app.onrender.com/api/customers",
+ {name,phone,userId}
+)
   setName("")
   setPhone("")
 
@@ -49,10 +59,12 @@ const deleteCustomer = async(id)=>{
  if(!window.confirm("Delete this customer?")) return
 
  try{
-  await axios.delete(
-   `https://khatabook-mern-app.onrender.com/api/customers/${id}`
-  )
-
+ await axios.delete(
+ `https://khatabook-mern-app.onrender.com/api/customers/${id}`,
+ {
+  data:{ userId }
+ }
+)
   loadCustomers()
 
  }catch(err){
