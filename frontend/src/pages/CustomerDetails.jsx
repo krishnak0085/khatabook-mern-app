@@ -54,8 +54,7 @@ const loadCustomer = async()=>{
  try{
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/customers/${id}`
- )
+  `https://khatabook-mern-app.onrender.com/api/customers/${id}?userId=${userId}`)
 
  setCustomer(res.data)
 
