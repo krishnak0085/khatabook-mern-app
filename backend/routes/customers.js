@@ -1,3 +1,5 @@
+const mongoose = require("mongoose")
+
 const router = require("express").Router()
 const Customer = require("../models/Customer")
 const Transaction = require("../models/Transaction")
@@ -11,7 +13,7 @@ router.post("/", async (req,res)=>{
 const customer = new Customer({
  name,
  phone,
- userId
+ userId: new mongoose.Types.ObjectId(userId)
 })
 
   await customer.save()
@@ -19,6 +21,7 @@ const customer = new Customer({
   res.json(customer)
 
  }catch(err){
+  console.error(err)
   res.status(500).json({error:err.message})
  }
 })
