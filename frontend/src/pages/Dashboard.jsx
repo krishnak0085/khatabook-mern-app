@@ -37,7 +37,7 @@ const addCustomer = async()=>{
   if(!name){
   alert("Enter customer name")
   return
-
+  }
  try{
 
  await axios.post(
