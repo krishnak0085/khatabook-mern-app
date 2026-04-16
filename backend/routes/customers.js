@@ -6,12 +6,13 @@ const Transaction = require("../models/Transaction")
 router.post("/", async (req,res)=>{
  try{
 
-  const { name, phone } = req.body
+  const { name, phone, userId } = req.body
 
-  const customer = new Customer({
-   name,
-   phone
-  })
+const customer = new Customer({
+ name,
+ phone,
+ userId
+})
 
   await customer.save()
 
@@ -24,10 +25,17 @@ router.post("/", async (req,res)=>{
 
 
 // GET CUSTOMERS WITH BALANCE
-router.get("/", async (req,res)=>{
+router.get("/:userId", async (req,res)=>{
  try{
 
   const customers = await Customer.aggregate([
+
+   {
+    $match:{
+     userId:req.params.userId
+    }
+   },
+
    {
     $lookup:{
      from:"transactions",
@@ -36,6 +44,7 @@ router.get("/", async (req,res)=>{
      as:"transactions"
     }
    },
+
    {
     $addFields:{
      balance:{
@@ -55,6 +64,7 @@ router.get("/", async (req,res)=>{
      }
     }
    }
+
   ])
 
   res.json(customers)
