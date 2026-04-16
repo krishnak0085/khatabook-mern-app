@@ -13,8 +13,7 @@ export default function Dashboard(){
  const loadCustomers = async()=>{
 try {
   const res = await axios.get(
- `https://khatabook-mern-app.onrender.com/api/customers/${userId}`
-)
+ `https://khatabook-mern-app.onrender.com/api/customers/user/${userId}`)
   setCustomers(res.data)
 }
   catch (error) {
