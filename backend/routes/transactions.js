@@ -4,15 +4,16 @@ const Transaction = require("../models/Transaction")
 // ADD TRANSACTION
 router.post("/", async (req,res)=>{
 
- const {customerId,amount,type,method,description} = req.body
+const {customerId,amount,type,method,description,userId} = req.body
 
- const transaction = new Transaction({
-  customerId,
-  amount,
-  type,
-  method,
-  description
- })
+const transaction = new Transaction({
+ customerId,
+ amount,
+ type,
+ method,
+ description,
+ userId
+})
 
  await transaction.save()
 
@@ -22,10 +23,11 @@ router.post("/", async (req,res)=>{
 
 
 // GET TRANSACTIONS OF CUSTOMER
-router.get("/:customerId", async (req,res)=>{
- 
+router.get("/:customerId/:userId", async (req,res)=>{
+
  const transactions = await Transaction.find({
-  customerId:req.params.customerId
+  customerId:req.params.customerId,
+  userId:req.params.userId
  })
 
  res.json(transactions)
