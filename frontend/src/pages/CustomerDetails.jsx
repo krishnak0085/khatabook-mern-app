@@ -71,7 +71,7 @@ const loadTransactions = async()=>{
  setLoading(true)
 
  const res = await axios.get(
- `https://khatabook-mern-app.onrender.com/api/transactions/${id}/${userId}`
+ `https://khatabook-mern-app.onrender.com/api/transactions/${id}/${userId}?page=${page}&limit=10`
 )
 
  const sorted = res.data.sort(
