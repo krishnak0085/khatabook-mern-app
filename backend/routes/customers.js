@@ -35,7 +35,7 @@ router.get("/user/:userId", async (req,res)=>{
 
    {
     $match:{
-     userId:req.params.userId
+     userId:new mongoose.Types.ObjectId(req.params.userId)
     }
    },
 
