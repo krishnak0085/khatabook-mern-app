@@ -43,4 +43,7 @@ const transactionSchema = new mongoose.Schema({
 
 })
 
+// INDEXES FOR FAST QUERIES
+transactionSchema.index({ customerId:1 })
+transactionSchema.index({ userId:1 })
 module.exports = mongoose.model("Transaction",transactionSchema)
