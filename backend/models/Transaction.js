@@ -10,22 +10,31 @@ const transactionSchema = new mongoose.Schema({
 
  customerId:{
   type: mongoose.Schema.Types.ObjectId,
-  ref:"Customer"
+  ref:"Customer",
+  required:true
  },
 
- amount:Number,
+ amount:{
+  type:Number,
+  required:true
+ },
 
  type:{
   type:String,
-  enum:["credit","debit"]
+  enum:["credit","debit"],
+  required:true
  },
 
  method:{
   type:String,
-  enum:["cash","upi","bank"]
+  enum:["cash","upi","bank"],
+  default:"cash"
  },
 
- description:String,
+ description:{
+  type:String,
+  default:""
+ },
 
  date:{
   type:Date,
@@ -33,3 +42,5 @@ const transactionSchema = new mongoose.Schema({
  }
 
 })
+
+module.exports = mongoose.model("Transaction",transactionSchema)
