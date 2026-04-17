@@ -275,7 +275,7 @@ const clearFilters = ()=>{
 // =========================
 // PDF GENERATION
 // =========================
-const generatePDF = (limit) => {
+const generatePDF =async (limit) => {
  const { default: jsPDF } = await import("jspdf")
  const autoTable = (await import("jspdf-autotable")).default
 
@@ -435,11 +435,11 @@ const generatePDF = (limit) => {
 // WHATSAPP SHARE
 // =========================
 
-const shareWhatsApp = () => {
+const shareWhatsApp = async () => {
 
  if(!customer) return
 
- const doc = generatePDF()
+ const doc = await generatePDF()
 
  const pdfBlob = doc.output("blob")
 
