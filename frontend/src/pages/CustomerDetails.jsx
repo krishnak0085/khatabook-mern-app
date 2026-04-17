@@ -38,7 +38,7 @@ const [toDate,setToDate] = useState("")
 
 // PAGINATION
 const [page,setPage] = useState(1)
-const perPage = 6
+//const perPage = 6
 
 // =========================
 // LOAD DATA
@@ -219,12 +219,12 @@ const dateFiltered = searched.filter(t=>{
 // PAGINATION
 // =========================
 
-const start = (page-1) * perPage
-const end = start + perPage
+// const start = (page-1) * perPage
+// const end = start + perPage
 
-const paginated = dateFiltered.slice(start,end)
+// const paginated = dateFiltered.slice(start,end)
 
-const totalPages = Math.ceil(dateFiltered.length / perPage)
+// const totalPages = Math.ceil(dateFiltered.length / perPage)
 
 // =========================
 // CLEAR FILTERS
@@ -243,34 +243,34 @@ const clearFilters = ()=>{
 // EXPORT EXCEL
 // =========================
 
-const exportExcel = ()=>{
+// const exportExcel = ()=>{
 
- const sheet = XLSX.utils.json_to_sheet(transactions)
+//  const sheet = XLSX.utils.json_to_sheet(transactions)
 
- const book = XLSX.utils.book_new()
+//  const book = XLSX.utils.book_new()
 
- XLSX.utils.book_append_sheet(
-  book,
-  sheet,
-  "Ledger"
- )
+//  XLSX.utils.book_append_sheet(
+//   book,
+//   sheet,
+//   "Ledger"
+//  )
 
- const buffer = XLSX.write(
-  book,
-  {bookType:"xlsx",type:"array"}
- )
+//  const buffer = XLSX.write(
+//   book,
+//   {bookType:"xlsx",type:"array"}
+//  )
 
- const data = new Blob(
-  [buffer],
-  {type:"application/octet-stream"}
- )
+//  const data = new Blob(
+//   [buffer],
+//   {type:"application/octet-stream"}
+//  )
 
- saveAs(
-  data,
-  `${customer?.name}-ledger.xlsx`
- )
+//  saveAs(
+//   data,
+//   `${customer?.name}-ledger.xlsx`
+//  )
 
-}
+// }
 
 // =========================
 // PDF GENERATION
@@ -629,7 +629,7 @@ Transactions
 
 {loading && <p>Loading...</p>}
 
-{paginated.map(t=>(
+{dateFiltered.map(t=>(
 
 <div
 key={t._id}
@@ -693,7 +693,7 @@ Prev
 
 <span>
 
-Page {page} / {totalPages}
+Page {page}
 
 </span>
 
