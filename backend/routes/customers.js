@@ -31,48 +31,35 @@ const customer = new Customer({
 router.get("/user/:userId", async (req,res)=>{
  try{
 
-  const customers = await Customer.aggregate([
+  const userId = new mongoose.Types.ObjectId(req.params.userId)
 
-   {
-    $match:{
-     userId:new mongoose.Types.ObjectId(req.params.userId)
-    }
-   },
+  const customers = await Customer.find({ userId })
 
-   {
-    $lookup:{
-     from:"transactions",
-     localField:"_id",
-     foreignField:"customerId",
-     as:"transactions"
-    }
-   },
+  const result = []
 
-   {
-    $addFields:{
-     balance:{
-      $sum:{
-       $map:{
-        input:"$transactions",
-        as:"t",
-        in:{
-         $cond:[
-          {$eq:["$$t.type","credit"]},
-          "$$t.amount",
-          {$multiply:["$$t.amount",-1]}
-         ]
-        }
-       }
-      }
-     }
-    }
-   }
+  for(const c of customers){
 
-  ])
+   const transactions = await Transaction.find({
+    customerId:c._id
+   })
 
-  res.json(customers)
+   let balance = 0
+
+   transactions.forEach(t=>{
+    if(t.type==="credit") balance += t.amount
+    else balance -= t.amount
+   })
+
+   result.push({
+    ...c._doc,
+    balance
+   })
+  }
+
+  res.json(result)
 
  }catch(err){
+  console.error(err)
   res.status(500).json({error:err.message})
  }
 })
