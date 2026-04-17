@@ -47,7 +47,7 @@ const perPage = 6
 useEffect(()=>{
  loadCustomer()
  loadTransactions()
-},[])
+},[page])
 
 const loadCustomer = async()=>{
 
