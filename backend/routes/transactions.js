@@ -49,11 +49,18 @@ router.get("/:customerId/:userId", async (req,res)=>{
    return res.status(400).json({msg:"Missing params"})
   }
 
+   const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 10
+
+  const skip = (page - 1) * limit
+
   const transactions = await Transaction.find({
    customerId: new mongoose.Types.ObjectId(customerId),
    userId: new mongoose.Types.ObjectId(userId)
-  }).sort({date:1})
-
+  })
+  .sort({date:-1})
+  .skip(skip)
+  .limit(limit)
   res.json(transactions)
 
  }catch(err){
