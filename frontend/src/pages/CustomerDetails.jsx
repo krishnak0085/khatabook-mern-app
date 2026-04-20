@@ -114,7 +114,7 @@ await axios.post(
   description,
   method:"cash",
   userId,
-  date
+  date: new Date(date)
  }
 )
 
@@ -211,15 +211,14 @@ const dateFiltered = searched.filter(t=>{
 
  if(!fromDate && !toDate) return true
 
- const d = new Date(t.date)
+ const d = new Date(t.date).toISOString().split("T")[0]
 
- if(fromDate && d < new Date(fromDate)) return false
- if(toDate && d > new Date(toDate)) return false
+ if(fromDate && d < fromDate) return false
+ if(toDate && d > toDate) return false
 
  return true
 
 })
-
 // =========================
 // PAGINATION
 // =========================
@@ -380,7 +379,7 @@ const generatePDF =async (limit) => {
   }
 
   rows.push([
-   new Date(t.date).toLocaleDateString(),
+   new Date(t.date).toLocaleDateString("en-GB")),
    t.description || "-",
    debit,
    credit,
