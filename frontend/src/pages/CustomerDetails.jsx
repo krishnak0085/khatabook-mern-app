@@ -379,7 +379,7 @@ const generatePDF =async (limit) => {
   }
 
   rows.push([
-   new Date(t.date).toLocaleDateString("en-GB")),
+   new Date(t.date).toLocaleDateString("en-GB"),
    t.description || "-",
    debit,
    credit,
