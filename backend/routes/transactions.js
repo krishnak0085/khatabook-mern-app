@@ -9,7 +9,7 @@ const Transaction = require("../models/Transaction")
 router.post("/", async (req,res)=>{
  try{
 
-  const { customerId, amount, type, method, description, userId } = req.body
+  const { customerId, amount, type, method, description, userId , date } = req.body
 
   // VALIDATION
   if(!customerId || !userId || !amount){
@@ -22,7 +22,8 @@ router.post("/", async (req,res)=>{
    type,
    method,
    description,
-   userId: new mongoose.Types.ObjectId(userId)
+   userId: new mongoose.Types.ObjectId(userId),
+   date: date ? new Date(date) : Date.now()
   })
 
   await transaction.save()
