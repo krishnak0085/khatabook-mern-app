@@ -114,7 +114,7 @@ await axios.post(
   description,
   method:"cash",
   userId,
-  date: new Date(date)
+  date: new Date(date + "T00:00:00")
  }
 )
 
