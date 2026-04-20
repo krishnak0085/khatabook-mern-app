@@ -23,8 +23,9 @@ const [transactions,setTransactions] = useState([])
 
 const [loading,setLoading] = useState(false)
 const [error,setError] = useState("")
-
-// ADD TRANSACTION
+const [date,setDate] = useState(
+ new Date().toISOString().split("T")[0]
+)// ADD TRANSACTION
 const [amount,setAmount] = useState("")
 const [type,setType] = useState("credit")
 const [description,setDescription] = useState("")
@@ -98,7 +99,10 @@ const addTransaction = async()=>{
   alert("Enter amount")
   return
  }
-
+ if(!date){
+  alert("Select date")
+  return
+ }
  try{
 
 await axios.post(
@@ -109,14 +113,15 @@ await axios.post(
   type,
   description,
   method:"cash",
-  userId
+  userId,
+  date
  }
 )
 
  setAmount("")
  setDescription("")
  setType("credit")
-
+ setDate("")
  loadTransactions()
 
  }catch(err){
@@ -521,7 +526,12 @@ Customer ID: {customer._id}
 <h2 className="font-bold mb-2">
 Add Transaction
 </h2>
-
+<input
+ type="date"
+ className="border p-2 w-full mb-2"
+ value={date}
+ onChange={(e)=>setDate(e.target.value)}
+/>
 <input
 placeholder="Amount"
 className="border p-2 w-full mb-2"
