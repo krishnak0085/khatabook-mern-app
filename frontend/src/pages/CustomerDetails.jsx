@@ -76,7 +76,7 @@ const loadTransactions = async()=>{
 )
 
  const sorted = res.data.sort(
-  (a,b)=> new Date(a.date) - new Date(b.date)
+  (a,b)=> new Date(b.date) - new Date(a.date)
  )
 
  setTransactions(sorted)
