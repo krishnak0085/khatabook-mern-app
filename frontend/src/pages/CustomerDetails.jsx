@@ -114,7 +114,7 @@ await axios.post(
   description,
   method:"cash",
   userId,
-  date: new Date(date + "T00:00:00")
+  date: date
  }
 )
 
@@ -358,7 +358,7 @@ const generatePDF =async (limit) => {
  const rows = []
 
  rows.push([
-  new Date(data[0]?.date).toLocaleDateString(),
+data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
   "Opening Balance",
   "",
   "",
@@ -379,7 +379,7 @@ const generatePDF =async (limit) => {
   }
 
   rows.push([
-   new Date(t.date).toLocaleDateString("en-GB"),
+  t.date.split("T")[0].split("-").reverse().join("/"),
    t.description || "-",
    debit,
    credit,
@@ -653,8 +653,7 @@ className="border p-3 mb-2 flex justify-between items-center"
 
 <p className="text-sm text-gray-500">
 
-{new Date(t.date).toLocaleDateString()}
-
+{t.date.split("T")[0].split("-").reverse().join("/")}
 </p>
 
 <p className={
