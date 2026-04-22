@@ -329,17 +329,17 @@ doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
  let message=""
  let color=[0,0,0]
 
- if(netBalance>0){
-  message=`${customer.name} will give you Rs. ${netBalance}`
-  color=[0,150,0]
- }
- else if(netBalance<0){
-  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
-  color=[200,0,0]
- }
- else{
-  message="Balance Settled"
- }
+ // if(netBalance>0){
+ //  message=`${customer.name} will give you Rs. ${netBalance}`
+ //  color=[0,150,0]
+ // }
+ // else if(netBalance<0){
+ //  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
+ //  color=[200,0,0]
+ // }
+ // else{
+ //  message="Balance Settled"
+ // }
 
 doc.setFontSize(14)
 doc.setFont(undefined,"bold")
@@ -354,11 +354,23 @@ doc.setFontSize(16)
 doc.setFont(undefined,"bold")
 doc.setTextColor(...color)
 
+let balanceText = ""
+
+if(netBalance > 0){
+ balanceText = `${customer.name} will give you Rs. ${netBalance}`
+}
+else if(netBalance < 0){
+ balanceText = `You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
+}
+else{
+ balanceText = "Balance Settled"
+}
+
 doc.text(
-`${customer.name} ${netBalance >= 0 ? "will give you" : "you will give"} Rs. ${Math.abs(netBalance)}`,
-105,
-35,
-{align:"center"}
+ balanceText,
+ 105,
+ 35,
+ {align:"center"}
 )
 
 // SUMMARY SECTION
