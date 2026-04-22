@@ -446,8 +446,8 @@ autoTable(doc,{
  },
 
  styles:{
-  fontSize:15,
-  cellPadding:4,
+  fontSize:13,
+  cellPadding:5,
   halign:"center"
  },
 
@@ -457,13 +457,17 @@ autoTable(doc,{
 
  didParseCell:function(data){
 
-  if(data.column.index===2 && data.cell.raw){
-   data.cell.styles.textColor=[200,0,0]
-  }
+  // Debit column
+ if(data.column.index === 2 && data.cell.raw){
+  data.cell.styles.textColor = [200,0,0]   // red
+  data.cell.styles.fillColor = [255,255,255] // white background
+ }
 
-  if(data.column.index===3 && data.cell.raw){
-   data.cell.styles.textColor=[0,150,0]
-  }
+ // Credit column
+ if(data.column.index === 3 && data.cell.raw){
+  data.cell.styles.textColor = [0,150,0]   // green
+  data.cell.styles.fillColor = [255,255,255] // white background
+ }
 
  }
 
