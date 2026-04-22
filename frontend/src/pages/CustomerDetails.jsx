@@ -501,7 +501,7 @@ doc.text(
 doc.setTextColor(0,150,0)
 doc.setFont(undefined,"bold")
 
-const waText = "Click here to Chat on WhatsApp: 8053338585"
+const waText = "Click here to Chat on WhatsApp: +91 8053338585"
 
 doc.text(
  waText,
@@ -515,7 +515,7 @@ doc.link(
  pageHeight - 12,
  95,
  8,
- { url: "https://wa.me/918053338585?text=Hi%20I%20want%20a%20website" }
+ {url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}` }
 )
 
 // reset color
