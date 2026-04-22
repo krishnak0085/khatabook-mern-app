@@ -477,21 +477,41 @@ autoTable(doc,{
 
 })
  // PAGE NUMBER
- const pageCount = doc.internal.getNumberOfPages()
+const pageCount = doc.internal.getNumberOfPages()
 
- for(let i=1;i<=pageCount;i++){
+for(let i=1;i<=pageCount;i++){
 
-  doc.setPage(i)
+ doc.setPage(i)
 
-  doc.setFontSize(9)
+ const pageHeight = doc.internal.pageSize.height
 
-  doc.text(
-   `Page ${i} of ${pageCount}`,
-   180,
-   doc.internal.pageSize.height-10
-  )
+ // LEFT SIDE ADVERTISEMENT
+ doc.setTextColor(0,0,255)
+ doc.setFontSize(9)
 
- }
+ const adText = "Need a Website / App for your business? WhatsApp: 8053338585"
+
+ doc.text(adText, 10, pageHeight - 10)
+
+ // Clickable WhatsApp link
+ doc.link(
+  10,
+  pageHeight - 14,
+  130,
+  6,
+  { url: "https://wa.me/918053338585" }
+ )
+
+ // RIGHT SIDE PAGE NUMBER
+ doc.setTextColor(0,0,0)
+
+ doc.text(
+  `Page ${i} of ${pageCount}`,
+  180,
+  pageHeight - 10
+ )
+
+}
 
  // SAVE PDF
  doc.save(`${customer.name}-statement.pdf`)
