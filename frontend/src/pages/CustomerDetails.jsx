@@ -385,18 +385,12 @@ doc.setFont(undefined,"normal")
 doc.setTextColor(0,0,0)
 
 let y = 50
-
-doc.text(`Total Entries : ${data.length}`, 60, y)
-y += 8
-
 doc.text(`Total Credit  : Rs. ${totalCredit}`, 60, y)
 y += 8
 
 doc.text(`Total Debit   : Rs. ${totalDebit}`, 60, y)
 y += 8
-
-doc.text(`Opening Bal.  : Rs. ${openingBalance}`, 60, y)
- // TABLE
+// TABLE
  let runningBalance = openingBalance
  const rows = []
 
