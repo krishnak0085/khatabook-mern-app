@@ -322,11 +322,10 @@ const generatePDF =async (limit) => {
  const doc = new jsPDF()
 
  // HEADER
- doc.setFontSize(18)
- doc.setTextColor(0,0,0)
-
- doc.text(`${customer.name} Ledger Statement`,60,15)
-
+doc.setFontSize(22)
+doc.setFont(undefined,"bold")
+doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
+ 
  let message=""
  let color=[0,0,0]
 
@@ -342,17 +341,21 @@ const generatePDF =async (limit) => {
   message="Balance Settled"
  }
 
- doc.setFontSize(12)
- doc.setTextColor(...color)
- doc.text(message,14,25)
+doc.setFontSize(14)
+doc.setFont(undefined,"bold")
+doc.setTextColor(...color)
+doc.text(message,105,30,{align:"center"})
 
  doc.setTextColor(0,0,0)
 
  // SUMMARY
- doc.setFontSize(10)
+doc.setFontSize(12)
+doc.setFont(undefined,"normal")
 
- doc.text(`Entries: ${data.length}`,14,35)
- 
+doc.text(`Total Entries: ${data.length}`,14,42)
+doc.text(`Total Credit: ₹${totalCredit}`,14,50)
+doc.text(`Total Debit: ₹${totalDebit}`,14,58)
+doc.text(`Opening Balance: ₹${openingBalance}`,14,66)
  // TABLE
  let runningBalance = openingBalance
  const rows = []
@@ -388,24 +391,43 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
 
  })
 
- autoTable(doc,{
-  startY:70,
-  head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
-  body:rows,
+autoTable(doc,{
+ startY:75,
 
-  didParseCell:function(data){
+ head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
 
-   if(data.column.index===2 && data.cell.raw){
-    data.cell.styles.textColor=[200,0,0]
-   }
+ body:rows,
 
-   if(data.column.index===3 && data.cell.raw){
-    data.cell.styles.textColor=[0,150,0]
-   }
+ headStyles:{
+  fillColor:[30,41,59],
+  textColor:[255,255,255],
+  fontSize:12,
+  halign:"center"
+ },
 
+ styles:{
+  fontSize:11,
+  cellPadding:4,
+  halign:"center"
+ },
+
+ columnStyles:{
+  1:{halign:"left"}
+ },
+
+ didParseCell:function(data){
+
+  if(data.column.index===2 && data.cell.raw){
+   data.cell.styles.textColor=[200,0,0]
   }
 
- })
+  if(data.column.index===3 && data.cell.raw){
+   data.cell.styles.textColor=[0,150,0]
+  }
+
+ }
+
+})
 
  // PAGE NUMBER
  const pageCount = doc.internal.getNumberOfPages()
