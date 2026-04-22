@@ -326,9 +326,8 @@ doc.setFontSize(22)
 doc.setFont(undefined,"bold")
 doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
  
- let message=""
- let color=[0,0,0]
-
+ // let message=""
+ // let color=[0,0,0]
  // if(netBalance>0){
  //  message=`${customer.name} will give you Rs. ${netBalance}`
  //  color=[0,150,0]
@@ -341,29 +340,33 @@ doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
  //  message="Balance Settled"
  // }
 
-doc.setFontSize(14)
-doc.setFont(undefined,"bold")
-doc.setTextColor(...color)
-doc.text(message,105,30,{align:"center"})
+//doc.setFontSize(14)
+//doc.setFont(undefined,"bold")
+//doc.setTextColor(...color)
+//doc.text(message,105,30,{align:"center"})
 
- doc.setTextColor(0,0,0)
+ //doc.setTextColor(0,0,0)
 
  // SUMMARY
 // BALANCE MESSAGE
+// BALANCE MESSAGE
 doc.setFontSize(16)
 doc.setFont(undefined,"bold")
-doc.setTextColor(...color)
 
 let balanceText = ""
 
+// COLOR LOGIC
 if(netBalance > 0){
  balanceText = `${customer.name} will give you Rs. ${netBalance}`
+ doc.setTextColor(0,150,0)   // green
 }
 else if(netBalance < 0){
  balanceText = `You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
+ doc.setTextColor(200,0,0)   // red
 }
 else{
  balanceText = "Balance Settled"
+ doc.setTextColor(0,150,0)   // green
 }
 
 doc.text(
@@ -372,6 +375,9 @@ doc.text(
  35,
  {align:"center"}
 )
+
+// reset color for rest of PDF
+doc.setTextColor(0,0,0)
 
 // SUMMARY SECTION
 doc.setFontSize(12)
