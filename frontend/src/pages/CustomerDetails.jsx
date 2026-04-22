@@ -397,7 +397,7 @@ doc.setFillColor(240,240,255)
 doc.rect(140,45,55,18,"F")
 doc.text(`Net Balance`,143,52)
 doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
-y += 8
+//y += 8
 // TABLE
  let runningBalance = openingBalance
  const rows = []
@@ -461,10 +461,6 @@ autoTable(doc,{
  },
 
  didParseCell:function(data){
-  if(data.row.raw && data.row.raw[1] === "Grand Total"){
- data.cell.styles.fontStyle="bold"
- data.cell.styles.fillColor=[240,240,240]
-}
   // debit rows light red reflection
   if(data.column.index === 2 && data.cell.raw){
    data.cell.styles.textColor=[200,0,0]
