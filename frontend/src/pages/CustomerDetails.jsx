@@ -330,11 +330,11 @@ doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
  let color=[0,0,0]
 
  if(netBalance>0){
-  message=`${customer.name} will give you ₹${netBalance}`
+  message=`${customer.name} will give you Rs. ${netBalance}`
   color=[0,150,0]
  }
  else if(netBalance<0){
-  message=`You will give ${customer.name} ₹${Math.abs(netBalance)}`
+  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
   color=[200,0,0]
  }
  else{
@@ -349,13 +349,35 @@ doc.text(message,105,30,{align:"center"})
  doc.setTextColor(0,0,0)
 
  // SUMMARY
+// BALANCE MESSAGE
+doc.setFontSize(16)
+doc.setFont(undefined,"bold")
+doc.setTextColor(...color)
+
+doc.text(
+`${customer.name} ${netBalance >= 0 ? "will give you" : "you will give"} Rs. ${Math.abs(netBalance)}`,
+105,
+35,
+{align:"center"}
+)
+
+// SUMMARY SECTION
 doc.setFontSize(12)
 doc.setFont(undefined,"normal")
+doc.setTextColor(0,0,0)
 
-doc.text(`Total Entries: ${data.length}`,14,42)
-doc.text(`Total Credit: ₹${totalCredit}`,14,50)
-doc.text(`Total Debit: ₹${totalDebit}`,14,58)
-doc.text(`Opening Balance: ₹${openingBalance}`,14,66)
+let y = 50
+
+doc.text(`Total Entries : ${data.length}`, 60, y)
+y += 8
+
+doc.text(`Total Credit  : Rs. ${totalCredit}`, 60, y)
+y += 8
+
+doc.text(`Total Debit   : Rs. ${totalDebit}`, 60, y)
+y += 8
+
+doc.text(`Opening Bal.  : Rs. ${openingBalance}`, 60, y)
  // TABLE
  let runningBalance = openingBalance
  const rows = []
@@ -392,7 +414,7 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
  })
 
 autoTable(doc,{
- startY:75,
+ startY:85,
 
  head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
 
