@@ -430,7 +430,13 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
   ])
 
  })
-
+rows.push([
+ "",
+ "Grand Total",
+ totalDebit,
+ totalCredit,
+ netBalance
+])
 autoTable(doc,{
  startY:85,
 
@@ -438,17 +444,20 @@ autoTable(doc,{
 
  body:rows,
 
+ theme:"grid",
+
  headStyles:{
   fillColor:[30,41,59],
   textColor:[255,255,255],
-  fontSize:12,
+  fontSize:13,
   halign:"center"
  },
 
  styles:{
   fontSize:13,
   cellPadding:5,
-  halign:"center"
+  lineWidth:0.3,
+  lineColor:[200,200,200]
  },
 
  columnStyles:{
@@ -456,23 +465,25 @@ autoTable(doc,{
  },
 
  didParseCell:function(data){
+  if(data.row.raw && data.row.raw[1] === "Grand Total"){
+ data.cell.styles.fontStyle="bold"
+ data.cell.styles.fillColor=[240,240,240]
+}
+  // debit rows light red reflection
+  if(data.column.index === 2 && data.cell.raw){
+   data.cell.styles.textColor=[200,0,0]
+   data.cell.styles.fillColor=[255,235,235]
+  }
 
-  // Debit column
- if(data.column.index === 2 && data.cell.raw){
-  data.cell.styles.textColor = [200,0,0]   // red
-  data.cell.styles.fillColor = [255,255,255] // white background
- }
-
- // Credit column
- if(data.column.index === 3 && data.cell.raw){
-  data.cell.styles.textColor = [0,150,0]   // green
-  data.cell.styles.fillColor = [255,255,255] // white background
- }
+  // credit rows light green reflection
+  if(data.column.index === 3 && data.cell.raw){
+   data.cell.styles.textColor=[0,150,0]
+   data.cell.styles.fillColor=[235,255,235]
+  }
 
  }
 
 })
-
  // PAGE NUMBER
  const pageCount = doc.internal.getNumberOfPages()
 
