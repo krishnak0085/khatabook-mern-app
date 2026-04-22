@@ -380,15 +380,23 @@ doc.text(
 doc.setTextColor(0,0,0)
 
 // SUMMARY SECTION
+// SUMMARY BOXES
 doc.setFontSize(12)
-doc.setFont(undefined,"normal")
-doc.setTextColor(0,0,0)
 
-let y = 50
-doc.text(`Total Credit  : Rs. ${totalCredit}`, 60, y)
-y += 8
+doc.setFillColor(255,240,240)
+doc.rect(20,45,55,18,"F")
+doc.text(`Total Debit (-)`,23,52)
+doc.text(`Rs. ${totalDebit}`,23,60)
 
-doc.text(`Total Debit   : Rs. ${totalDebit}`, 60, y)
+doc.setFillColor(235,255,235)
+doc.rect(80,45,55,18,"F")
+doc.text(`Total Credit (+)`,83,52)
+doc.text(`Rs. ${totalCredit}`,83,60)
+
+doc.setFillColor(240,240,255)
+doc.rect(140,45,55,18,"F")
+doc.text(`Net Balance`,143,52)
+doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
 y += 8
 // TABLE
  let runningBalance = openingBalance
@@ -424,15 +432,9 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
   ])
 
  })
-rows.push([
- "",
- "Grand Total",
- totalDebit,
- totalCredit,
- netBalance
-])
+
 autoTable(doc,{
- startY:85,
+ startY:75,
 
  head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
 
