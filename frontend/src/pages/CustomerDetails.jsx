@@ -474,7 +474,7 @@ autoTable(doc,{
   }
 
  }
-
+//url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`
 })
  // PAGE NUMBER
 const pageCount = doc.internal.getNumberOfPages()
@@ -486,22 +486,41 @@ for(let i=1;i<=pageCount;i++){
  const pageHeight = doc.internal.pageSize.height
 
  // LEFT SIDE ADVERTISEMENT
- doc.setTextColor(0,0,255)
- doc.setFontSize(9)
+// ADVERTISEMENT (bottom-left)
+doc.setFontSize(9)
 
- const adText = "Need a Website / App for your business? WhatsApp: 8053338585"
+// first line
+doc.setTextColor(0,0,0)
+doc.text(
+ "Need a Website / App for your business?",
+ 10,
+ pageHeight - 12
+)
 
- doc.text(adText, 10, pageHeight - 10)
+// second line (WhatsApp style)
+doc.setTextColor(0,150,0)
+doc.setFont(undefined,"bold")
 
- // Clickable WhatsApp link
- doc.link(
-  10,
-  pageHeight - 14,
-  130,
-  6,
-  { url: "https://wa.me/918053338585" }
- )
+const waText = "Click here to Chat on WhatsApp: 8053338585"
 
+doc.text(
+ waText,
+ 10,
+ pageHeight - 7
+)
+
+// clickable link
+doc.link(
+ 10,
+ pageHeight - 12,
+ 95,
+ 8,
+ { url: "https://wa.me/918053338585?text=Hi%20I%20want%20a%20website" }
+)
+
+// reset color
+doc.setTextColor(0,0,0)
+doc.setFont(undefined,"normal")
  // RIGHT SIDE PAGE NUMBER
  doc.setTextColor(0,0,0)
 
