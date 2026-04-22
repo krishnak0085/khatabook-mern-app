@@ -446,7 +446,7 @@ autoTable(doc,{
  },
 
  styles:{
-  fontSize:11,
+  fontSize:15,
   cellPadding:4,
   halign:"center"
  },
