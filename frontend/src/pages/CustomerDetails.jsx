@@ -121,7 +121,7 @@ const saveTransaction = async()=>{
    )
 
    setEditingId(null)
-
+   setShowEdit(false)
   }else{
 
    // ADD TRANSACTION
@@ -822,7 +822,7 @@ onChange={(e)=>setType(e.target.value)}
 <div className="flex gap-2">
 
 <button
-onClick={addTransaction}
+onClick={saveTransaction}
 className="bg-blue-600 text-white px-4 py-2 rounded"
 >
 Update
@@ -883,25 +883,23 @@ Balance: ₹{t.balance}
 </p>
 
 </div>
+<div className="flex gap-2">
+
 <button
  onClick={()=>editTransaction(t)}
- className="bg-blue-600 text-white px-3 py-1 rounded text-xs"
+ className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
 >
  Edit
 </button>
+
 <button
-onClick={()=>deleteTransaction(t._id)}
-className="bg-black text-white px-3 py-1 rounded text-xs"
+ onClick={()=>deleteTransaction(t._id)}
+ className="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700"
 >
-
-Delete
-
+ Delete
 </button>
 
-
- 
 </div>
-
 ))}
 
 {/* PAGINATION */}
