@@ -20,7 +20,7 @@ const { id } = useParams()
 
 const [customer,setCustomer] = useState(null)
 const [transactions,setTransactions] = useState([])
-
+const [editingId,setEditingId] = useState(null)
 const [loading,setLoading] = useState(false)
 const [error,setError] = useState("")
 const [date,setDate] = useState(
@@ -103,33 +103,55 @@ const addTransaction = async()=>{
   alert("Select date")
   return
  }
+
  try{
 
-await axios.post(
- "https://khatabook-mern-app.onrender.com/api/transactions",
- {
-  customerId:id,
-  amount:Number(amount),
-  type,
-  description,
-  method:"cash",
-  userId,
-  date: date
- }
-)
+  if(editingId){
 
- setAmount("")
- setDescription("")
- setType("credit")
- setDate("")
- loadTransactions()
+   // UPDATE TRANSACTION
+   await axios.put(
+    `https://khatabook-mern-app.onrender.com/api/transactions/${editingId}`,
+    {
+     amount:Number(amount),
+     type,
+     description,
+     date,
+     userId
+    }
+   )
+
+   setEditingId(null)
+
+  }else{
+
+   // ADD TRANSACTION
+   await axios.post(
+    "https://khatabook-mern-app.onrender.com/api/transactions",
+    {
+     customerId:id,
+     amount:Number(amount),
+     type,
+     description,
+     method:"cash",
+     userId,
+     date
+    }
+   )
+
+  }
+
+  setAmount("")
+  setDescription("")
+  setType("credit")
+  setDate("")
+
+  loadTransactions()
 
  }catch(err){
- alert("Transaction failed")
+  alert("Transaction failed")
  }
 
 }
-
 // =========================
 // DELETE
 // =========================
@@ -242,7 +264,15 @@ const clearFilters = ()=>{
  setPage(1)
 
 }
+//TRANSACTION
+ const editTransaction = (t)=>{
+ setAmount(t.amount)
+ setDescription(t.description || "")
+ setType(t.type)
+ setDate(t.date.split("T")[0])
 
+ setEditingId(t._id)
+}
 // =========================
 // EXPORT EXCEL
 // =========================
@@ -665,14 +695,11 @@ onChange={(e)=>setType(e.target.value)}
 <option value="credit">Credit</option>
 <option value="debit">Debit</option>
 </select>
-<button
-onClick={addTransaction}
-className="bg-blue-600 text-white p-2 w-full rounded"
->
-
-Add Transaction
-
+ 
+<button onClick={saveTransaction}>
+ {editingId ? "Update Transaction" : "Add Transaction"}
 </button>
+ 
 <select
 className="border p-2 mb-4"
 onChange={(e)=>{
@@ -785,7 +812,12 @@ Balance: ₹{t.balance}
 </p>
 
 </div>
-
+<button
+ onClick={()=>editTransaction(t)}
+ className="bg-blue-600 text-white px-3 py-1 rounded text-xs"
+>
+ Edit
+</button>
 <button
 onClick={()=>deleteTransaction(t._id)}
 className="bg-black text-white px-3 py-1 rounded text-xs"
@@ -795,6 +827,8 @@ Delete
 
 </button>
 
+
+ 
 </div>
 
 ))}
