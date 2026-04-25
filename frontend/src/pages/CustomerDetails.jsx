@@ -322,7 +322,7 @@ const generatePDF =async (limit) => {
  let allData = [...ledger]
 let data = [...ledger]
 // sort latest first
-data.sort((a,b)=> new Date(b.date) - new Date(a.date))
+data.sort((a,b)=>{  const dateDiff = new Date(b.date) - new Date(a.date)   if(dateDiff !== 0) return dateDiff   return b._id.localeCompare(a._id) })
 
 // take last N entries
 if(limit !== "all"){
@@ -330,7 +330,7 @@ if(limit !== "all"){
 }
 
 // now show them oldest → newest in PDF
-data.sort((a,b)=> new Date(a.date) - new Date(b.date))
+data.sort((a,b)=>{  const dateDiff = new Date(a.date) - new Date(b.date)   if(dateDiff !== 0) return dateDiff   return a._id.localeCompare(b._id) })
  // OPENING BALANCE
  let openingBalance = 0
  const firstDate = new Date(data[0]?.date)
