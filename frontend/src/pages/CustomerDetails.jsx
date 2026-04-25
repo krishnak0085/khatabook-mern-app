@@ -288,12 +288,16 @@ const generatePDF =async (limit) => {
  let allData = [...transactions]
  let data = [...transactions]
 
- if(limit !== "all"){
-  data = data.slice(-Number(limit))
- }
+// sort latest first
+data.sort((a,b)=> new Date(b.date) - new Date(a.date))
 
- data.sort((a,b)=> new Date(a.date) - new Date(b.date))
+// take last N entries
+if(limit !== "all"){
+ data = data.slice(0, Number(limit))
+}
 
+// now show them oldest → newest in PDF
+data.sort((a,b)=> new Date(a.date) - new Date(b.date))
  // OPENING BALANCE
  let openingBalance = 0
  const firstDate = data[0]?.date
