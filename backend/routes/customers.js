@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const auth = require("../middleware/auth")
+
 const router = require("express").Router()
 const Customer = require("../models/Customer")
 const Transaction = require("../models/Transaction")
@@ -28,14 +28,12 @@ const customer = new Customer({
 
 
 // GET CUSTOMERS WITH BALANCE
-router.get("/user", async (req,res)=>{
+router.get("/user/:userId", async (req,res)=>{
  try{
 
   const userId = new mongoose.Types.ObjectId(req.params.userId)
 
-  const customers = await Customer.find({
- userId:req.userId
-})
+  const customers = await Customer.find({ userId })
 
   const result = []
 
