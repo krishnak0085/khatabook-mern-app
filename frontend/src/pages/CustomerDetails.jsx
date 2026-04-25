@@ -194,12 +194,16 @@ const balance = totalCredit - totalDebit
 // =========================
 // RUNNING BALANCE LEDGER
 // =========================
-
 const getLedger = ()=>{
+
+ // sort oldest first for correct balance
+ const sorted = [...transactions].sort(
+  (a,b)=> new Date(a.date) - new Date(b.date)
+ )
 
  let running = 0
 
- return transactions.map(t=>{
+ const ledger = sorted.map(t=>{
 
   if(t.type==="credit"){
    running += t.amount
@@ -210,6 +214,9 @@ const getLedger = ()=>{
   return {...t,balance:running}
 
  })
+
+ // show latest first in UI
+ return ledger.reverse()
 
 }
 
