@@ -898,7 +898,7 @@ Balance: ₹{t.balance}
 >
  Delete
 </button>
-
+</div>
 </div>
 ))}
 
