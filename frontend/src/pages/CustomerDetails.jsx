@@ -326,17 +326,18 @@ const generatePDF =async (limit) => {
 
  if(!transactions.length || !customer) return
 
- let allData = [...ledger]
-let data = [...ledger]
+ let allData = [...transactions]
+let data = [...transactions]
 // sort latest first
 data.sort((a,b)=>{
+
  const dateDiff = new Date(b.date) - new Date(a.date)
 
- if(dateDiff !== 0){
-  return dateDiff
- }
+ if(dateDiff !== 0) return dateDiff
 
-return new Date(b._id) - new Date(a._id)})
+ return b._id.localeCompare(a._id)
+
+})
 // take last N entries
 if(limit !== "all"){
  data = data.slice(0, Number(limit))
@@ -394,30 +395,8 @@ allData.forEach(t=>{
 doc.setFontSize(22)
 doc.setFont(undefined,"bold")
 doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
- 
- // let message=""
- // let color=[0,0,0]
- // if(netBalance>0){
- //  message=`${customer.name} will give you Rs. ${netBalance}`
- //  color=[0,150,0]
- // }
- // else if(netBalance<0){
- //  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
- //  color=[200,0,0]
- // }
- // else{
- //  message="Balance Settled"
- // }
 
-//doc.setFontSize(14)
-//doc.setFont(undefined,"bold")
-//doc.setTextColor(...color)
-//doc.text(message,105,30,{align:"center"})
 
- //doc.setTextColor(0,0,0)
-
- // SUMMARY
-// BALANCE MESSAGE
 // BALANCE MESSAGE
 doc.setFontSize(16)
 doc.setFont(undefined,"bold")
@@ -449,35 +428,16 @@ doc.text(
 doc.setTextColor(0,0,0)
 
 // SUMMARY SECTION
-// SUMMARY BOXES
-// doc.setFontSize(12)
-
-// doc.setFillColor(255,240,240)
-// doc.rect(20,45,55,18,"F")
-// doc.text(`Total Debit (-)`,23,52)
-// doc.text(`Rs. ${totalDebit}`,23,60)
-
-// doc.setFillColor(235,255,235)
-// doc.rect(80,45,55,18,"F")
-// doc.text(`Total Credit (+)`,83,52)
-// doc.text(`Rs. ${totalCredit}`,83,60)
-
-// doc.setFillColor(240,240,255)
-// doc.rect(140,45,55,18,"F")
-// doc.text(`Net Balance`,143,52)
-// doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
-//y += 8
-// TABLE
  let runningBalance = openingBalance
  const rows = []
 
  rows.push([
-data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
-  "Opening Balance",
-  "",
-  "",
-  runningBalance
- ])
+"",
+"Opening Balance",
+"",
+"",
+runningBalance
+])
 
  data.forEach(t=>{
 
