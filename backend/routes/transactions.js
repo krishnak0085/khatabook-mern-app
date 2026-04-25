@@ -41,7 +41,7 @@ router.post("/", async (req,res)=>{
 // GET TRANSACTIONS OF CUSTOMER
 // ============================
 
-router.get("/:customerId", async (req,res)=>{
+router.get("/:customerId/:userId", async (req,res)=>{
  try{
 
   const { customerId, userId } = req.params
