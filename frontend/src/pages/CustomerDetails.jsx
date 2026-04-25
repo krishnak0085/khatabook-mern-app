@@ -17,7 +17,7 @@ const { id } = useParams()
 // =========================
 // STATES
 // =========================
-
+const [showEdit,setShowEdit] = useState(false)
 const [customer,setCustomer] = useState(null)
 const [transactions,setTransactions] = useState([])
 const [editingId,setEditingId] = useState(null)
@@ -266,12 +266,16 @@ const clearFilters = ()=>{
 }
 //TRANSACTION
  const editTransaction = (t)=>{
+
  setAmount(t.amount)
  setDescription(t.description || "")
  setType(t.type)
  setDate(t.date.split("T")[0])
 
  setEditingId(t._id)
+
+ setShowEdit(true)
+
 }
 // =========================
 // EXPORT EXCEL
@@ -695,16 +699,21 @@ onChange={(e)=>setType(e.target.value)}
 <option value="credit">Credit</option>
 <option value="debit">Debit</option>
 </select>
- 
-<button onClick={saveTransaction}>
+</div>
+<div className="flex gap-3 items-center mt-2">
+
+<button
+ onClick={saveTransaction}
+ className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+>
  {editingId ? "Update Transaction" : "Add Transaction"}
 </button>
- 
+
 <select
-className="border p-2 mb-4"
-onChange={(e)=>{
- const value = e.target.value
- if(value) generatePDF(value)
+ className="border p-2 rounded"
+ onChange={(e)=>{
+  const value = e.target.value
+  if(value) generatePDF(value)
 }}
 >
 
@@ -716,9 +725,7 @@ onChange={(e)=>{
 
 </select>
 
-
 </div>
-
 {/* TOOLS */}
 
 <div className="flex flex-wrap gap-2 mb-4">
@@ -771,6 +778,70 @@ Clear
 
 </div>
 
+ {/* //edit popup */}
+ {showEdit && (
+
+<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+
+<div className="bg-white p-6 rounded shadow w-96">
+
+<h2 className="font-bold mb-3">
+Edit Transaction
+</h2>
+
+<input
+type="date"
+className="border p-2 w-full mb-2"
+value={date}
+onChange={(e)=>setDate(e.target.value)}
+/>
+
+<input
+placeholder="Amount"
+className="border p-2 w-full mb-2"
+value={amount}
+onChange={e=>setAmount(e.target.value)}
+/>
+
+<input
+placeholder="Description"
+className="border p-2 w-full mb-2"
+value={description}
+onChange={e=>setDescription(e.target.value)}
+/>
+
+<select
+className="border p-2 w-full mb-3"
+value={type}
+onChange={(e)=>setType(e.target.value)}
+>
+<option value="credit">Credit</option>
+<option value="debit">Debit</option>
+</select>
+
+<div className="flex gap-2">
+
+<button
+onClick={addTransaction}
+className="bg-blue-600 text-white px-4 py-2 rounded"
+>
+Update
+</button>
+
+<button
+onClick={()=>setShowEdit(false)}
+className="bg-gray-400 px-4 py-2 rounded"
+>
+Cancel
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+)}
 {/* TRANSACTIONS */}
 
 <h2 className="font-bold mb-3">
