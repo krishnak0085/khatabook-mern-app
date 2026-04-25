@@ -419,22 +419,22 @@ doc.setTextColor(0,0,0)
 
 // SUMMARY SECTION
 // SUMMARY BOXES
-doc.setFontSize(12)
+// doc.setFontSize(12)
 
-doc.setFillColor(255,240,240)
-doc.rect(20,45,55,18,"F")
-doc.text(`Total Debit (-)`,23,52)
-doc.text(`Rs. ${totalDebit}`,23,60)
+// doc.setFillColor(255,240,240)
+// doc.rect(20,45,55,18,"F")
+// doc.text(`Total Debit (-)`,23,52)
+// doc.text(`Rs. ${totalDebit}`,23,60)
 
-doc.setFillColor(235,255,235)
-doc.rect(80,45,55,18,"F")
-doc.text(`Total Credit (+)`,83,52)
-doc.text(`Rs. ${totalCredit}`,83,60)
+// doc.setFillColor(235,255,235)
+// doc.rect(80,45,55,18,"F")
+// doc.text(`Total Credit (+)`,83,52)
+// doc.text(`Rs. ${totalCredit}`,83,60)
 
-doc.setFillColor(240,240,255)
-doc.rect(140,45,55,18,"F")
-doc.text(`Net Balance`,143,52)
-doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
+// doc.setFillColor(240,240,255)
+// doc.rect(140,45,55,18,"F")
+// doc.text(`Net Balance`,143,52)
+// doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
 //y += 8
 // TABLE
  let runningBalance = openingBalance
@@ -472,7 +472,7 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
  })
 
 autoTable(doc,{
- startY:75,
+ startY:50,
 
  head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
 
@@ -571,8 +571,46 @@ doc.setFont(undefined,"normal")
 }
 
  // SAVE PDF
+ // doc.save(`${customer.name}-statement.pdf`)
+ // return doc
+
+ // ========================
+// SHARE / DOWNLOAD LOGIC
+// ========================
+
+const pdfBlob = doc.output("blob")
+
+const file = new File(
+ [pdfBlob],
+ `${customer.name}-statement.pdf`,
+ { type:"application/pdf" }
+)
+
+// mobile share popup
+if(navigator.share){
+
+ try{
+
+  await navigator.share({
+   files:[file],
+   title:`${customer.name} Ledger Statement`
+  })
+
+ }catch(err){
+
+  // fallback download
+  doc.save(`${customer.name}-statement.pdf`)
+
+ }
+
+}else{
+
+ // desktop fallback
  doc.save(`${customer.name}-statement.pdf`)
- return doc
+
+}
+
+return doc
  // WHATSAPP SHARE
  // const msg = `Ledger statement of ${customer.name}. Entries: ${data.length}`
 
