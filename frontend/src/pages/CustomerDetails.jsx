@@ -93,7 +93,7 @@ const loadTransactions = async()=>{
 // ADD TRANSACTION
 // =========================
 
-const addTransaction = async()=>{
+const saveTransaction = async()=>{
 
  if(!amount){
   alert("Enter amount")
