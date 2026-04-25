@@ -284,38 +284,7 @@ const clearFilters = ()=>{
  setShowEdit(true)
 
 }
-// =========================
-// EXPORT EXCEL
-// =========================
 
-// const exportExcel = ()=>{
-
-//  const sheet = XLSX.utils.json_to_sheet(transactions)
-
-//  const book = XLSX.utils.book_new()
-
-//  XLSX.utils.book_append_sheet(
-//   book,
-//   sheet,
-//   "Ledger"
-//  )
-
-//  const buffer = XLSX.write(
-//   book,
-//   {bookType:"xlsx",type:"array"}
-//  )
-
-//  const data = new Blob(
-//   [buffer],
-//   {type:"application/octet-stream"}
-//  )
-
-//  saveAs(
-//   data,
-//   `${customer?.name}-ledger.xlsx`
-//  )
-
-// }
 
 // =========================
 // PDF GENERATION
@@ -326,22 +295,37 @@ const generatePDF =async (limit) => {
 
  if(!transactions.length || !customer) return
 
- let allData = [...transactions]
-let data = [...transactions]
-// sort latest first
-data.sort((a,b)=>{
+// SORT ALL DATA OLDEST FIRST
+let allData = [...transactions].sort((a,b)=>{
 
- const dateDiff = new Date(b.date) - new Date(a.date)
+ const dateDiff = new Date(a.date) - new Date(b.date)
 
  if(dateDiff !== 0) return dateDiff
 
- return b._id.localeCompare(a._id)
+ return a._id.localeCompare(b._id)
 
 })
-// take last N entries
+
+// SELECT DATA FOR PDF
+let data = [...allData]
+
 if(limit !== "all"){
- data = data.slice(0, Number(limit))
+ data = allData.slice(-Number(limit))
 }
+// sort latest first
+// data.sort((a,b)=>{
+
+//  const dateDiff = new Date(b.date) - new Date(a.date)
+
+//  if(dateDiff !== 0) return dateDiff
+
+//  return b._id.localeCompare(a._id)
+
+// })
+// // take last N entries
+// if(limit !== "all"){
+//  data = data.slice(0, Number(limit))
+// }
 
 // now show them oldest → newest in PDF
 data.sort((a,b)=>{
@@ -354,29 +338,21 @@ data.sort((a,b)=>{
  return a._id.localeCompare(b._id)
 })
  
- let openingBalance = 0
+let openingBalance = 0
 
-const firstEntry = data[0]
+const firstIndex = allData.findIndex(
+ t => t._id === data[0]._id
+)
 
-allData.forEach(t=>{
+for(let i=0;i<firstIndex;i++){
 
- if(
-  new Date(t.date) < new Date(firstEntry.date) ||
-  (
-   new Date(t.date).getTime() === new Date(firstEntry.date).getTime() &&
-   t._id < firstEntry._id
-  )
- ){
-
-  if(t.type === "credit"){
-   openingBalance += t.amount
-  }else{
-   openingBalance -= t.amount
-  }
-
+ if(allData[i].type === "credit"){
+  openingBalance += allData[i].amount
+ }else{
+  openingBalance -= allData[i].amount
  }
 
-})
+}
 
  // TOTALS
  const totalCredit = data
