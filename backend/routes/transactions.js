@@ -91,5 +91,31 @@ router.delete("/:id", async (req,res)=>{
  }
 
 })
+// UPDATE TRANSACTION
+router.put("/:id", async (req,res)=>{
+ try{
 
+  const { amount, type, description, date, userId } = req.body
+
+  const transaction = await Transaction.findOneAndUpdate(
+   {
+    _id:req.params.id,
+    userId:new mongoose.Types.ObjectId(userId)
+   },
+   {
+    amount,
+    type,
+    description,
+    date
+   },
+   { new:true }
+  )
+
+  res.json(transaction)
+
+ }catch(err){
+  res.status(500).json({error:err.message})
+ }
+
+})
 module.exports = router
