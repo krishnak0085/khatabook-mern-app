@@ -351,8 +351,10 @@ data.sort((a,b)=>{
  }
 
  return a._id.localeCompare(b._id)
-}) // OPENING BALANCE
+})
+ 
  let openingBalance = 0
+
 const firstEntry = data[0]
 
 allData.forEach(t=>{
@@ -365,7 +367,7 @@ allData.forEach(t=>{
   )
  ){
 
-  if(t.type==="credit"){
+  if(t.type === "credit"){
    openingBalance += t.amount
   }else{
    openingBalance -= t.amount
