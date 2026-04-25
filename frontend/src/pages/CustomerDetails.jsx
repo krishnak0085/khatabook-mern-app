@@ -319,9 +319,8 @@ const generatePDF =async (limit) => {
 
  if(!transactions.length || !customer) return
 
- let allData = [...transactions]
- let data = [...transactions]
-
+ let allData = [...ledger]
+let data = [...ledger]
 // sort latest first
 data.sort((a,b)=> new Date(b.date) - new Date(a.date))
 
@@ -334,7 +333,7 @@ if(limit !== "all"){
 data.sort((a,b)=> new Date(a.date) - new Date(b.date))
  // OPENING BALANCE
  let openingBalance = 0
- const firstDate = data[0]?.date
+ const firstDate = new Date(data[0]?.date)
 
  allData.forEach(t=>{
   if(new Date(t.date) < new Date(firstDate)){
