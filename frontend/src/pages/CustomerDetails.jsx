@@ -197,7 +197,7 @@ const balance = totalCredit - totalDebit
 
 const getLedger = ()=>{
 
- let running = 0
+ let running = openingBalance
 
  return transactions.map(t=>{
 
