@@ -9,18 +9,17 @@ export default function Dashboard(){
  const [customers,setCustomers] = useState([])
  const [name,setName] = useState("")
  const [phone,setPhone] = useState("")
- const userId = localStorage.getItem("userId")
  const loadCustomers = async()=>{
-try {
-  const res = await axios.get(
- `https://khatabook-mern-app.onrender.com/api/customers/user/${userId}`)
-  setCustomers(res.data)
-}
-  catch (error) {
-
-  console.log(error)
+const res = await axios.get(
+ "https://khatabook-mern-app.onrender.com/api/customers/user",
+ {
+  headers:{
+   Authorization:`Bearer ${localStorage.getItem("token")}`
+  }
  }
-}
+)
+
+setCustomers(res.data)
 
 useEffect(()=>{
 
@@ -42,7 +41,12 @@ const addCustomer = async()=>{
 
  await axios.post(
  "https://khatabook-mern-app.onrender.com/api/customers",
- {name,phone,userId}
+ {name,phone},
+ {
+  headers:{
+   Authorization:`Bearer ${localStorage.getItem("token")}`
+  }
+ }
 )
   setName("")
   setPhone("")
