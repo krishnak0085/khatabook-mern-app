@@ -53,7 +53,7 @@ router.get("/:customerId/:userId", async (req,res)=>{
   const transactions = await Transaction.find({
    customerId: new mongoose.Types.ObjectId(customerId),
    userId: new mongoose.Types.ObjectId(userId)
-  }).sort({date:-1})
+  }).sort({date:-1,_id: -1})
 
   res.json(transactions)
 
