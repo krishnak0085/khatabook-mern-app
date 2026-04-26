@@ -284,7 +284,38 @@ const clearFilters = ()=>{
  setShowEdit(true)
 
 }
+// =========================
+// EXPORT EXCEL
+// =========================
 
+// const exportExcel = ()=>{
+
+//  const sheet = XLSX.utils.json_to_sheet(transactions)
+
+//  const book = XLSX.utils.book_new()
+
+//  XLSX.utils.book_append_sheet(
+//   book,
+//   sheet,
+//   "Ledger"
+//  )
+
+//  const buffer = XLSX.write(
+//   book,
+//   {bookType:"xlsx",type:"array"}
+//  )
+
+//  const data = new Blob(
+//   [buffer],
+//   {type:"application/octet-stream"}
+//  )
+
+//  saveAs(
+//   data,
+//   `${customer?.name}-ledger.xlsx`
+//  )
+
+// }
 
 // =========================
 // PDF GENERATION
@@ -295,37 +326,21 @@ const generatePDF =async (limit) => {
 
  if(!transactions.length || !customer) return
 
-// SORT ALL DATA OLDEST FIRST
-let allData = [...transactions].sort((a,b)=>{
-
- const dateDiff = new Date(a.date) - new Date(b.date)
-
- if(dateDiff !== 0) return dateDiff
-
- return a._id.localeCompare(b._id)
-
-})
-
-// SELECT DATA FOR PDF
-let data = [...allData]
-
-if(limit !== "all"){
- data = allData.slice(-Number(limit))
-}
+ let allData = [...ledger]
+let data = [...ledger]
 // sort latest first
-// data.sort((a,b)=>{
+data.sort((a,b)=>{
+ const dateDiff = new Date(b.date) - new Date(a.date)
 
-//  const dateDiff = new Date(b.date) - new Date(a.date)
+ if(dateDiff !== 0){
+  return dateDiff
+ }
 
-//  if(dateDiff !== 0) return dateDiff
-
-//  return b._id.localeCompare(a._id)
-
-// })
-// // take last N entries
-// if(limit !== "all"){
-//  data = data.slice(0, Number(limit))
-// }
+return new Date(b._id) - new Date(a._id)})
+// take last N entries
+if(limit !== "all"){
+ data = data.slice(0, Number(limit))
+}
 
 // now show them oldest → newest in PDF
 data.sort((a,b)=>{
@@ -336,23 +351,29 @@ data.sort((a,b)=>{
  }
 
  return a._id.localeCompare(b._id)
-})
- 
-let openingBalance = 0
+}) // OPENING BALANCE
+ let openingBalance = 0
+const firstEntry = data[0]
 
-const firstIndex = allData.findIndex(
- t => t._id === data[0]._id
-)
+allData.forEach(t=>{
 
-for(let i=0;i<firstIndex;i++){
+ if(
+  new Date(t.date) < new Date(firstEntry.date) ||
+  (
+   new Date(t.date).getTime() === new Date(firstEntry.date).getTime() &&
+   t._id < firstEntry._id
+  )
+ ){
 
- if(allData[i].type === "credit"){
-  openingBalance += allData[i].amount
- }else{
-  openingBalance -= allData[i].amount
+  if(t.type==="credit"){
+   openingBalance += t.amount
+  }else{
+   openingBalance -= t.amount
+  }
+
  }
 
-}
+})
 
  // TOTALS
  const totalCredit = data
@@ -371,8 +392,30 @@ for(let i=0;i<firstIndex;i++){
 doc.setFontSize(22)
 doc.setFont(undefined,"bold")
 doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
+ 
+ // let message=""
+ // let color=[0,0,0]
+ // if(netBalance>0){
+ //  message=`${customer.name} will give you Rs. ${netBalance}`
+ //  color=[0,150,0]
+ // }
+ // else if(netBalance<0){
+ //  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
+ //  color=[200,0,0]
+ // }
+ // else{
+ //  message="Balance Settled"
+ // }
 
+//doc.setFontSize(14)
+//doc.setFont(undefined,"bold")
+//doc.setTextColor(...color)
+//doc.text(message,105,30,{align:"center"})
 
+ //doc.setTextColor(0,0,0)
+
+ // SUMMARY
+// BALANCE MESSAGE
 // BALANCE MESSAGE
 doc.setFontSize(16)
 doc.setFont(undefined,"bold")
@@ -404,16 +447,35 @@ doc.text(
 doc.setTextColor(0,0,0)
 
 // SUMMARY SECTION
+// SUMMARY BOXES
+// doc.setFontSize(12)
+
+// doc.setFillColor(255,240,240)
+// doc.rect(20,45,55,18,"F")
+// doc.text(`Total Debit (-)`,23,52)
+// doc.text(`Rs. ${totalDebit}`,23,60)
+
+// doc.setFillColor(235,255,235)
+// doc.rect(80,45,55,18,"F")
+// doc.text(`Total Credit (+)`,83,52)
+// doc.text(`Rs. ${totalCredit}`,83,60)
+
+// doc.setFillColor(240,240,255)
+// doc.rect(140,45,55,18,"F")
+// doc.text(`Net Balance`,143,52)
+// doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
+//y += 8
+// TABLE
  let runningBalance = openingBalance
  const rows = []
 
  rows.push([
-"",
-"Opening Balance",
-"",
-"",
-runningBalance
-])
+data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
+  "Opening Balance",
+  "",
+  "",
+  runningBalance
+ ])
 
  data.forEach(t=>{
 
