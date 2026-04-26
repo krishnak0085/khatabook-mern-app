@@ -326,8 +326,8 @@ const generatePDF =async (limit) => {
 
  if(!transactions.length || !customer) return
 
- let allData = [...ledger]
-let data = [...ledger]
+ let allData = [...transactions]
+let data = [...transactions]
 // sort latest first
 data.sort((a,b)=>{
  const dateDiff = new Date(b.date) - new Date(a.date)
@@ -352,10 +352,22 @@ data.sort((a,b)=>{
 
  return a._id.localeCompare(b._id)
 }) // OPENING BALANCE
- let openingBalance = 0
+let openingBalance = 0
+
+// sort transactions oldest first
+const sortedAll = [...transactions].sort((a,b)=>{
+
+ const dateDiff = new Date(a.date) - new Date(b.date)
+
+ if(dateDiff !== 0) return dateDiff
+
+ return a._id.localeCompare(b._id)
+
+})
+
 const firstEntry = data[0]
 
-allData.forEach(t=>{
+sortedAll.forEach(t=>{
 
  if(
   new Date(t.date) < new Date(firstEntry.date) ||
@@ -373,6 +385,7 @@ allData.forEach(t=>{
 
  }
 
+})
 })
 
  // TOTALS
@@ -393,29 +406,6 @@ doc.setFontSize(22)
 doc.setFont(undefined,"bold")
 doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
  
- // let message=""
- // let color=[0,0,0]
- // if(netBalance>0){
- //  message=`${customer.name} will give you Rs. ${netBalance}`
- //  color=[0,150,0]
- // }
- // else if(netBalance<0){
- //  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
- //  color=[200,0,0]
- // }
- // else{
- //  message="Balance Settled"
- // }
-
-//doc.setFontSize(14)
-//doc.setFont(undefined,"bold")
-//doc.setTextColor(...color)
-//doc.text(message,105,30,{align:"center"})
-
- //doc.setTextColor(0,0,0)
-
- // SUMMARY
-// BALANCE MESSAGE
 // BALANCE MESSAGE
 doc.setFontSize(16)
 doc.setFont(undefined,"bold")
@@ -445,37 +435,17 @@ doc.text(
 
 // reset color for rest of PDF
 doc.setTextColor(0,0,0)
-
-// SUMMARY SECTION
-// SUMMARY BOXES
-// doc.setFontSize(12)
-
-// doc.setFillColor(255,240,240)
-// doc.rect(20,45,55,18,"F")
-// doc.text(`Total Debit (-)`,23,52)
-// doc.text(`Rs. ${totalDebit}`,23,60)
-
-// doc.setFillColor(235,255,235)
-// doc.rect(80,45,55,18,"F")
-// doc.text(`Total Credit (+)`,83,52)
-// doc.text(`Rs. ${totalCredit}`,83,60)
-
-// doc.setFillColor(240,240,255)
-// doc.rect(140,45,55,18,"F")
-// doc.text(`Net Balance`,143,52)
-// doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
-//y += 8
 // TABLE
  let runningBalance = openingBalance
  const rows = []
 
- rows.push([
-data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
-  "Opening Balance",
-  "",
-  "",
-  runningBalance
- ])
+rows.push([
+"",
+"Opening Balance",
+"",
+"",
+runningBalance
+])
 
  data.forEach(t=>{
 
