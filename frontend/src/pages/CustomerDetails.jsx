@@ -329,7 +329,8 @@ data.sort((a,b)=>{
   return dateDiff
  }
 
-return new Date(b._id) - new Date(a._id)})
+ return b._id.localeCompare(a._id)
+})
 // take last N entries
 if(limit !== "all"){
  data = data.slice(0, Number(limit))
