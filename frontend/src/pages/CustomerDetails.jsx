@@ -385,7 +385,7 @@ sortedAll.forEach(t=>{
 
  }
 
-})
+
 });
 
  // TOTALS
