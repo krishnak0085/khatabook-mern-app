@@ -195,11 +195,38 @@ const balance = totalCredit - totalDebit
 // RUNNING BALANCE LEDGER
 // =========================
 
+// const getLedger = ()=>{
+
+//  let running = 0
+
+//  return transactions.map(t=>{
+
+//   if(t.type==="credit"){
+//    running += t.amount
+//   }else{
+//    running -= t.amount
+//   }
+
+//   return {...t,balance:running}
+
+//  })
+
+//}
 const getLedger = ()=>{
 
  let running = 0
 
- return transactions.map(t=>{
+ const sorted = [...transactions].sort((a,b)=>{
+
+  const dateDiff = new Date(a.date) - new Date(b.date)
+
+  if(dateDiff !== 0) return dateDiff
+
+  return a._id.localeCompare(b._id)
+
+ })
+
+ const ledgerData = sorted.map(t=>{
 
   if(t.type==="credit"){
    running += t.amount
@@ -211,8 +238,8 @@ const getLedger = ()=>{
 
  })
 
+ return ledgerData.reverse() // UI latest first
 }
-
 const ledger = getLedger()
 
 // =========================
