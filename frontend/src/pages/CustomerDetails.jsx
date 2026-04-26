@@ -385,8 +385,8 @@ sortedAll.forEach(t=>{
 
  }
 
-});
 })
+});
 
  // TOTALS
  const totalCredit = data
