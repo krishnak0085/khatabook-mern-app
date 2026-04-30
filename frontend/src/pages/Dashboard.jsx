@@ -9,6 +9,7 @@ export default function Dashboard(){
  const [customers,setCustomers] = useState([])
  const [name,setName] = useState("")
  const [phone,setPhone] = useState("")
+ const [search,setSearch] = useState("")
  const userId = localStorage.getItem("userId")
  const loadCustomers = async()=>{
 try {
@@ -31,7 +32,7 @@ useEffect(()=>{
 
  loadCustomers()
 
-},[])
+},[userId,navigate])
 
 const addCustomer = async()=>{
   if(!name){
@@ -71,6 +72,10 @@ const deleteCustomer = async(id)=>{
  }
 
 }
+ const filteredCustomers = customers.filter(c =>
+ c.name?.toLowerCase().includes(search.toLowerCase()) ||
+ c.phone?.includes(search)
+)
  return(
 
  <div className="min-h-screen bg-gray-100 p-4">
@@ -98,9 +103,14 @@ const deleteCustomer = async(id)=>{
  className="bg-blue-600 text-white w-full p-2 rounded">
  Add Customer
  </button>
-
+<input
+ placeholder="🔍 Search customer..."
+ className="border p-2 w-full mb-4"
+ value={search}
+ onChange={(e)=>setSearch(e.target.value)}
+/>
  </div>
-{customers.map(c=>{
+{filteredCustomers.map(c=>{
 
  const balance = Number(c.balance || 0)
 
@@ -146,7 +156,7 @@ const deleteCustomer = async(id)=>{
 
 })}
 {
-    customers.length===0 && (
+    filteredCustomers.length===0 && (
 
     <p className="text-center text-gray-500 mt-10">
     No customers yet. Add your first customer!
@@ -154,8 +164,7 @@ const deleteCustomer = async(id)=>{
 
     )
 }
-{
-    customers.length>0 && (
+{filteredCustomers.length>0 && (
 
     <p className="text-center text-gray-500 mt-10">
     Tap on a customer to view details and add transactions.
