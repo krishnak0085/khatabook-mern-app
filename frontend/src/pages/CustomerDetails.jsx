@@ -184,7 +184,7 @@ const deleteTransaction = async(tid)=>{
 
 }
 
-}
+
 
 // =========================
 // BALANCE CALCULATION
