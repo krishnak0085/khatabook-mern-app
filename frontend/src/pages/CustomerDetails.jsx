@@ -92,13 +92,13 @@ const loadTransactions = async()=>{
 // =========================
 // ADD TRANSACTION
 // =========================
-
 const saveTransaction = async()=>{
 
  if(!amount){
   alert("Enter amount")
   return
  }
+
  if(!date){
   alert("Select date")
   return
@@ -108,8 +108,7 @@ const saveTransaction = async()=>{
 
   if(editingId){
 
-   // UPDATE TRANSACTION
-   await axios.put(
+   const res = await axios.put(
     `https://khatabook-mern-app.onrender.com/api/transactions/${editingId}`,
     {
      amount:Number(amount),
@@ -120,12 +119,18 @@ const saveTransaction = async()=>{
     }
    )
 
+   setTransactions(prev =>
+    prev.map(t =>
+     t._id === editingId ? res.data : t
+    )
+   )
+
    setEditingId(null)
    setShowEdit(false)
+
   }else{
 
-   // ADD TRANSACTION
-   await axios.post(
+   const res = await axios.post(
     "https://khatabook-mern-app.onrender.com/api/transactions",
     {
      customerId:id,
@@ -138,14 +143,15 @@ const saveTransaction = async()=>{
     }
    )
 
+   // NEW TRANSACTION ADD WITHOUT RELOAD
+   setTransactions(prev => [res.data, ...prev])
+
   }
 
   setAmount("")
   setDescription("")
   setType("credit")
   setDate("")
-
-  loadTransactions()
 
  }catch(err){
   alert("Transaction failed")
@@ -162,18 +168,21 @@ const deleteTransaction = async(tid)=>{
 
  try{
 
-await axios.delete(
- `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`,
- {
-  data:{ userId }
- }
-)
+  await axios.delete(
+   `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`,
+   { data:{ userId } }
+  )
 
- loadTransactions()
+  // REMOVE FROM STATE
+  setTransactions(prev =>
+   prev.filter(t => t._id !== tid)
+  )
 
  }catch(err){
- alert("Delete failed")
+  alert("Delete failed")
  }
+
+}
 
 }
 
