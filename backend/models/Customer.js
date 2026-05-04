@@ -12,4 +12,5 @@ const customerSchema = new mongoose.Schema({
  phone:String
 
 })
+customerSchema.index({ userId:1 })
 module.exports = mongoose.model("Customer", customerSchema)
