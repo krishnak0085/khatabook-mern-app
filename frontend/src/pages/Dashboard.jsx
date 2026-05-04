@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react"
+import { useEffect,useState ,useMemo} from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
@@ -11,14 +11,25 @@ export default function Dashboard(){
  const [phone,setPhone] = useState("")
  const [search,setSearch] = useState("")
  const userId = localStorage.getItem("userId")
- const loadCustomers = async()=>{
-try {
-  const res = await axios.get(
- `https://khatabook-mern-app.onrender.com/api/customers/user/${userId}`)
-  setCustomers(res.data)
-}
-  catch (error) {
+ const [debouncedSearch, setDebouncedSearch] = useState(search)
 
+useEffect(()=>{
+ const timer = setTimeout(()=>{
+  setDebouncedSearch(search)
+ },300)
+
+ return ()=>clearTimeout(timer)
+},[search])
+const loadCustomers = async()=>{
+ try {
+  const res = await axios.get(
+   `https://khatabook-mern-app.onrender.com/api/customers/user/${userId}`
+  )
+
+  // reverse once (latest first)
+  setCustomers(res.data.reverse())
+
+ } catch (error) {
   console.log(error)
  }
 }
@@ -35,20 +46,21 @@ useEffect(()=>{
 },[userId,navigate])
 
 const addCustomer = async()=>{
-  if(!name){
+ if(!name){
   alert("Enter customer name")
   return
-  }
- try{
+ }
 
- await axios.post(
- "https://khatabook-mern-app.onrender.com/api/customers",
- {name,phone,userId}
-)
+ try{
+  const res = await axios.post(
+   "https://khatabook-mern-app.onrender.com/api/customers",
+   {name,phone,userId}
+  )
+
+  setCustomers(prev => [res.data, ...prev])
+
   setName("")
   setPhone("")
-
-  loadCustomers()
 
  }catch(err){
   console.log(err)
@@ -59,23 +71,26 @@ const deleteCustomer = async(id)=>{
  if(!window.confirm("Delete this customer?")) return
 
  try{
- await axios.delete(
- `https://khatabook-mern-app.onrender.com/api/customers/${id}`,
- {
-  data:{ userId }
- }
-)
-  loadCustomers()
+  await axios.delete(
+   `https://khatabook-mern-app.onrender.com/api/customers/${id}`,
+   { data:{ userId } }
+  )
+
+  setCustomers(prev =>
+   prev.filter(c => c._id !== id)
+  )
 
  }catch(err){
   console.log(err)
  }
 
 }
- const filteredCustomers = customers.filter(c =>
- c.name?.toLowerCase().includes(search.toLowerCase()) ||
- c.phone?.includes(search)
-)
+ const filteredCustomers = useMemo(() => {
+ return customers.filter(c =>
+  c.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+  c.phone?.includes(debouncedSearch)
+ )
+}, [customers,debouncedSearch])
  return(
 
  <div className="min-h-screen bg-gray-100 p-4">
