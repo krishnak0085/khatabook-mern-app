@@ -814,7 +814,10 @@ onChange={(e)=>setType(e.target.value)}
 >
 
 <option value="">Download Statement</option>
+<option value="1">Last 1 Entry</option>
 <option value="2">Last 2 Entries</option>
+<option value="3">Last 3 Entry</option>
+<option value="4">Last 4 Entry</option>
 <option value="5">Last 5 Entries</option>
 <option value="10">Last 10 Entries</option>
 <option value="all">All Entries</option>
