@@ -459,31 +459,7 @@ allData.forEach(t=>{
 doc.setFontSize(22)
 doc.setFont(undefined,"bold")
 doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
- 
- // let message=""
- // let color=[0,0,0]
- // if(netBalance>0){
- //  message=`${customer.name} will give you Rs. ${netBalance}`
- //  color=[0,150,0]
- // }
- // else if(netBalance<0){
- //  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
- //  color=[200,0,0]
- // }
- // else{
- //  message="Balance Settled"
- // }
 
-//doc.setFontSize(14)
-//doc.setFont(undefined,"bold")
-//doc.setTextColor(...color)
-//doc.text(message,105,30,{align:"center"})
-
- //doc.setTextColor(0,0,0)
-
- // SUMMARY
-// BALANCE MESSAGE
-// BALANCE MESSAGE
 doc.setFontSize(16)
 doc.setFont(undefined,"bold")
 
@@ -513,32 +489,14 @@ doc.text(
 // reset color for rest of PDF
 doc.setTextColor(0,0,0)
 
-// SUMMARY SECTION
-// SUMMARY BOXES
-// doc.setFontSize(12)
 
-// doc.setFillColor(255,240,240)
-// doc.rect(20,45,55,18,"F")
-// doc.text(`Total Debit (-)`,23,52)
-// doc.text(`Rs. ${totalDebit}`,23,60)
-
-// doc.setFillColor(235,255,235)
-// doc.rect(80,45,55,18,"F")
-// doc.text(`Total Credit (+)`,83,52)
-// doc.text(`Rs. ${totalCredit}`,83,60)
-
-// doc.setFillColor(240,240,255)
-// doc.rect(140,45,55,18,"F")
-// doc.text(`Net Balance`,143,52)
-// doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
-//y += 8
-// TABLE
  let runningBalance = openingBalance
+ const attachmentLinks = []
  const rows = []
 
  rows.push([
 data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
-  "Opening Balance",
+  "Opening Balance","-",
   "",
   "",
   runningBalance
@@ -556,10 +514,16 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
    credit=t.amount
    runningBalance += t.amount
   }
-
+  if(t.attachmentUrl){
+ attachmentLinks.push({
+  row: rows.length,
+  url: t.attachmentUrl
+ })
+}
   rows.push([
   t.date.split("T")[0].split("-").reverse().join("/"),
    t.description || "-",
+   t.attachmentUrl ? "View File" : "-",
    debit,
    credit,
    runningBalance
@@ -570,7 +534,8 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
 autoTable(doc,{
  startY:50,
 
- head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
+ head:[["Date","Description", "Attachment",
+"Debit (-)","Credit (+)","Balance"]],
 
  body:rows,
 
@@ -596,18 +561,46 @@ autoTable(doc,{
 
  didParseCell:function(data){
   // debit rows light red reflection
-  if(data.column.index === 2 && data.cell.raw){
+  if(data.column.index === 3 && data.cell.raw){
    data.cell.styles.textColor=[200,0,0]
    data.cell.styles.fillColor=[255,235,235]
   }
 
   // credit rows light green reflection
-  if(data.column.index === 3 && data.cell.raw){
+  if(data.column.index === 4 && data.cell.raw){
    data.cell.styles.textColor=[0,150,0]
    data.cell.styles.fillColor=[235,255,235]
   }
 
+ },
+ didDrawCell:(data)=>{
+
+ if(
+  data.column.index === 2 &&
+  data.cell.raw === "View File"
+ ){
+
+  const link = attachmentLinks.find(
+   item => item.row === data.row.index
+  )
+
+  if(link){
+
+   doc.link(
+    data.cell.x,
+    data.cell.y,
+    data.cell.width,
+    data.cell.height,
+    {
+      url: link.url
+    }
+   )
+
+  }
+
  }
+
+}
 //url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`
 })
  // PAGE NUMBER
