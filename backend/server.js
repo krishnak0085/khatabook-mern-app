@@ -1,7 +1,7 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
-
+const uploadRoutes = require("./routes/upload")
 const authRoutes = require("./routes/auth")
 const customerRoutes = require("./routes/customers")
 const transactionRoutes = require("./routes/transactions")
@@ -28,6 +28,7 @@ console.log("Loading customer routes...")
 app.use("/api/customers", customerRoutes)
 console.log("Loading customer routes...")
 app.use("/api/transactions", transactionRoutes)
+app.use("/api/upload", uploadRoutes)
 
 app.listen(5000,()=>{
  console.log("Server running on port 5000")
