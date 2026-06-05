@@ -29,6 +29,7 @@ const [date,setDate] = useState(
 const [amount,setAmount] = useState("")
 const [type,setType] = useState("credit")
 const [description,setDescription] = useState("")
+ const [attachment,setAttachment] = useState(null)
 const userId = localStorage.getItem("userId")
 // SEARCH
 const [search,setSearch] = useState("")
@@ -88,7 +89,31 @@ const loadTransactions = async()=>{
  setLoading(false)
 
 }
+const uploadAttachment = async(file)=>{
 
+ if(!file){
+  return {
+   url:"",
+   type:""
+  }
+ }
+
+ const formData = new FormData()
+
+ formData.append("file",file)
+
+ const res = await axios.post(
+  "https://khatabook-mern-app.onrender.com/api/upload",
+  formData,
+  {
+   headers:{
+    "Content-Type":"multipart/form-data"
+   }
+  }
+ )
+
+ return res.data
+}
 // =========================
 // ADD TRANSACTION
 // =========================
@@ -130,8 +155,18 @@ const saveTransaction = async()=>{
 
   }else{
 
-   const res = await axios.post(
-    "https://khatabook-mern-app.onrender.com/api/transactions",
+
+ let uploaded = {
+  url:"",
+  type:""
+ }
+
+ if(attachment){
+  uploaded = await uploadAttachment(attachment)
+ }
+
+ const res = await axios.post(
+  "https://khatabook-mern-app.onrender.com/api/transactions",
     {
      customerId:id,
      amount:Number(amount),
@@ -139,7 +174,10 @@ const saveTransaction = async()=>{
      description,
      method:"cash",
      userId,
-     date
+     date,
+     
+ attachmentUrl:uploaded.url,
+ attachmentType:uploaded.type
     }
    )
 
@@ -152,7 +190,7 @@ const saveTransaction = async()=>{
   setDescription("")
   setType("credit")
   setDate("")
-
+  setAttachment(null)
  }catch(err){
   alert("Transaction failed")
  }
@@ -786,7 +824,12 @@ className="border p-2 w-full mb-2"
 value={description}
 onChange={e=>setDescription(e.target.value)}
 />
-
+<input
+ type="file"
+ accept=".pdf,.jpg,.jpeg,.png"
+ className="border p-2 w-full mb-2"
+ onChange={(e)=>setAttachment(e.target.files[0])}
+/>
 <select
 className="border p-2 w-full mb-2"
 value={type}
@@ -980,7 +1023,20 @@ t.type==="credit"
 Balance: ₹{t.balance}
 
 </p>
+{t.attachmentUrl && (
 
+<a
+ href={t.attachmentUrl}
+ target="_blank"
+ rel="noreferrer"
+ className="bg-purple-600 text-white px-2 py-1 rounded text-xs inline-block mt-2"
+>
+
+📎 View File
+
+</a>
+
+)}
 </div>
 <div className="flex gap-2">
 
