@@ -110,7 +110,9 @@ router.put("/:id", async (req,res)=>{
     amount,
     type,
     description,
-    date
+    date,
+    attachmentUrl,
+ attachmentType
    },
    { new:true }
   )
