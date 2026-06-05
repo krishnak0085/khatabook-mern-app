@@ -35,7 +35,16 @@ const transactionSchema = new mongoose.Schema({
   type:String,
   default:""
  },
+ // NEW
+  attachmentUrl:{
+    type:String,
+    default:""
+  },
 
+  attachmentType:{
+    type:String,
+    default:""
+  },
  date:{
   type:Date,
   default:Date.now
