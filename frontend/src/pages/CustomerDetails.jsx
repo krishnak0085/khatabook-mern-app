@@ -523,7 +523,7 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
   rows.push([
   t.date.split("T")[0].split("-").reverse().join("/"),
    t.description || "-",
-   t.attachmentUrl ? "View File" : "-",
+   t.attachmentUrl ? " 🔗 View Bill" : "-",
    debit,
    credit,
    runningBalance
@@ -559,25 +559,34 @@ autoTable(doc,{
   1:{halign:"left"}
  },
 
- didParseCell:function(data){
-  // debit rows light red reflection
-  if(data.column.index === 3 && data.cell.raw){
-   data.cell.styles.textColor=[200,0,0]
-   data.cell.styles.fillColor=[255,235,235]
-  }
+didParseCell:function(data){
 
-  // credit rows light green reflection
-  if(data.column.index === 4 && data.cell.raw){
-   data.cell.styles.textColor=[0,150,0]
-   data.cell.styles.fillColor=[235,255,235]
-  }
+ // View Bill hyperlink style
+ if(
+  data.column.index === 2 &&
+  data.cell.raw === " 🔗 View Bill"
+ ){
+  data.cell.styles.textColor = [0,0,255]
+ }
 
- },
+ // debit
+ if(data.column.index === 3 && data.cell.raw){
+  data.cell.styles.textColor=[200,0,0]
+  data.cell.styles.fillColor=[255,235,235]
+ }
+
+ // credit
+ if(data.column.index === 4 && data.cell.raw){
+  data.cell.styles.textColor=[0,150,0]
+  data.cell.styles.fillColor=[235,255,235]
+ }
+
+},
  didDrawCell:(data)=>{
 
  if(
   data.column.index === 2 &&
-  data.cell.raw === "View File"
+  data.cell.raw === "View Bill"
  ){
 
   const link = attachmentLinks.find(
@@ -612,38 +621,8 @@ for(let i=1;i<=pageCount;i++){
 
  const pageHeight = doc.internal.pageSize.height
 
- // LEFT SIDE ADVERTISEMENT
-// ADVERTISEMENT (bottom-left)
-doc.setFontSize(9)
 
-// first line
-doc.setTextColor(0,0,0)
-doc.text(
- "Need a Website / App for your business?",
- 10,
- pageHeight - 12
-)
 
-// second line (WhatsApp style)
-doc.setTextColor(0,150,0)
-doc.setFont(undefined,"bold")
-
-const waText = "Click here to Chat on WhatsApp: +91 8053338585"
-
-doc.text(
- waText,
- 10,
- pageHeight - 7
-)
-
-// clickable link
-doc.link(
- 10,
- pageHeight - 12,
- 95,
- 8,
- {url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}` }
-)
 
 // reset color
 doc.setTextColor(0,0,0)
