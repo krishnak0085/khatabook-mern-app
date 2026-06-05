@@ -19,7 +19,5 @@
     "mongoose": "^9.3.0",
 
     "cloudinary": "^2.7.0",
-"multer": "^2.0.2",
-"multer-storage-cloudinary": "^4.0.0"
-  }
+"multer": "^2.0.2"  }
 }
