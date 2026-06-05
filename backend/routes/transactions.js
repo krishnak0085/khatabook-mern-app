@@ -9,7 +9,8 @@ const Transaction = require("../models/Transaction")
 router.post("/", async (req,res)=>{
  try{
 
-  const { customerId, amount, type, method, description, userId , date } = req.body
+  const { customerId, amount, type, method, description, userId , date , attachmentUrl , 
+ attachmentType } = req.body
 
   // VALIDATION
   if(!customerId || !userId || !amount){
@@ -23,6 +24,8 @@ router.post("/", async (req,res)=>{
    method,
    description,
    userId: new mongoose.Types.ObjectId(userId),
+   attachmentUrl,
+ attachmentType,
    date: date ? new Date(date) : Date.now()
   })
 
@@ -95,7 +98,8 @@ router.delete("/:id", async (req,res)=>{
 router.put("/:id", async (req,res)=>{
  try{
 
-  const { amount, type, description, date, userId } = req.body
+  const { amount, type, description, date, userId ,attachmentUrl,
+ attachmentType} = req.body
 
   const transaction = await Transaction.findOneAndUpdate(
    {
