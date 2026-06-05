@@ -1,34 +1,44 @@
 const router = require("express").Router()
 const multer = require("multer")
-const { CloudinaryStorage } = require("multer-storage-cloudinary")
 const cloudinary = require("../config/cloudinary")
 
-const storage = new CloudinaryStorage({
- cloudinary,
- params:{
-  folder:"khatabook",
-  resource_type:"auto"
- }
+const upload = multer({
+ storage: multer.memoryStorage()
 })
-
-const upload = multer({ storage })
 
 router.post(
  "/",
  upload.single("file"),
- async(req,res)=>{
+ async (req,res)=>{
 
   try{
 
+   const result = await new Promise((resolve,reject)=>{
+
+    cloudinary.uploader.upload_stream(
+      {
+        folder:"khatabook",
+        resource_type:"auto"
+      },
+      (error,result)=>{
+
+        if(error) return reject(error)
+
+        resolve(result)
+      }
+    ).end(req.file.buffer)
+
+   })
+
    res.json({
-    url:req.file.path,
-    type:req.file.mimetype
+     url: result.secure_url,
+     type: req.file.mimetype
    })
 
   }catch(err){
 
    res.status(500).json({
-    error:err.message
+    error: err.message
    })
 
   }
