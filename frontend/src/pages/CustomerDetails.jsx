@@ -29,7 +29,6 @@ const [date,setDate] = useState(
 const [amount,setAmount] = useState("")
 const [type,setType] = useState("credit")
 const [description,setDescription] = useState("")
- const [attachment,setAttachment] = useState(null)
 const userId = localStorage.getItem("userId")
 // SEARCH
 const [search,setSearch] = useState("")
@@ -89,31 +88,7 @@ const loadTransactions = async()=>{
  setLoading(false)
 
 }
-const uploadAttachment = async(file)=>{
 
- if(!file){
-  return {
-   url:"",
-   type:""
-  }
- }
-
- const formData = new FormData()
-
- formData.append("file",file)
-
- const res = await axios.post(
-  "https://khatabook-mern-app.onrender.com/api/upload",
-  formData,
-  {
-   headers:{
-    "Content-Type":"multipart/form-data"
-   }
-  }
- )
-
- return res.data
-}
 // =========================
 // ADD TRANSACTION
 // =========================
@@ -155,18 +130,8 @@ const saveTransaction = async()=>{
 
   }else{
 
-
- let uploaded = {
-  url:"",
-  type:""
- }
-
- if(attachment){
-  uploaded = await uploadAttachment(attachment)
- }
-
- const res = await axios.post(
-  "https://khatabook-mern-app.onrender.com/api/transactions",
+   const res = await axios.post(
+    "https://khatabook-mern-app.onrender.com/api/transactions",
     {
      customerId:id,
      amount:Number(amount),
@@ -174,10 +139,7 @@ const saveTransaction = async()=>{
      description,
      method:"cash",
      userId,
-     date,
-     
- attachmentUrl:uploaded.url,
- attachmentType:uploaded.type
+     date
     }
    )
 
@@ -190,7 +152,7 @@ const saveTransaction = async()=>{
   setDescription("")
   setType("credit")
   setDate("")
-  setAttachment(null)
+
  }catch(err){
   alert("Transaction failed")
  }
@@ -459,7 +421,31 @@ allData.forEach(t=>{
 doc.setFontSize(22)
 doc.setFont(undefined,"bold")
 doc.text(`${customer.name} Ledger Statement`,105,18,{align:"center"})
+ 
+ // let message=""
+ // let color=[0,0,0]
+ // if(netBalance>0){
+ //  message=`${customer.name} will give you Rs. ${netBalance}`
+ //  color=[0,150,0]
+ // }
+ // else if(netBalance<0){
+ //  message=`You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
+ //  color=[200,0,0]
+ // }
+ // else{
+ //  message="Balance Settled"
+ // }
 
+//doc.setFontSize(14)
+//doc.setFont(undefined,"bold")
+//doc.setTextColor(...color)
+//doc.text(message,105,30,{align:"center"})
+
+ //doc.setTextColor(0,0,0)
+
+ // SUMMARY
+// BALANCE MESSAGE
+// BALANCE MESSAGE
 doc.setFontSize(16)
 doc.setFont(undefined,"bold")
 
@@ -489,14 +475,32 @@ doc.text(
 // reset color for rest of PDF
 doc.setTextColor(0,0,0)
 
+// SUMMARY SECTION
+// SUMMARY BOXES
+// doc.setFontSize(12)
 
+// doc.setFillColor(255,240,240)
+// doc.rect(20,45,55,18,"F")
+// doc.text(`Total Debit (-)`,23,52)
+// doc.text(`Rs. ${totalDebit}`,23,60)
+
+// doc.setFillColor(235,255,235)
+// doc.rect(80,45,55,18,"F")
+// doc.text(`Total Credit (+)`,83,52)
+// doc.text(`Rs. ${totalCredit}`,83,60)
+
+// doc.setFillColor(240,240,255)
+// doc.rect(140,45,55,18,"F")
+// doc.text(`Net Balance`,143,52)
+// doc.text(`Rs. ${Math.abs(netBalance)}`,143,60)
+//y += 8
+// TABLE
  let runningBalance = openingBalance
- const attachmentLinks = []
  const rows = []
 
  rows.push([
 data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
-  "Opening Balance","-",
+  "Opening Balance",
   "",
   "",
   runningBalance
@@ -514,16 +518,10 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
    credit=t.amount
    runningBalance += t.amount
   }
-  if(t.attachmentUrl){
- attachmentLinks.push({
-  row: rows.length,
-  url: t.attachmentUrl
- })
-}
+
   rows.push([
   t.date.split("T")[0].split("-").reverse().join("/"),
    t.description || "-",
-   t.attachmentUrl ? " 🔗 View Bill" : "-",
    debit,
    credit,
    runningBalance
@@ -534,8 +532,7 @@ data[0]?.date?.split("T")[0].split("-").reverse().join("/"),
 autoTable(doc,{
  startY:50,
 
- head:[["Date","Description", "Attachment",
-"Debit (-)","Credit (+)","Balance"]],
+ head:[["Date","Description","Debit (-)","Credit (+)","Balance"]],
 
  body:rows,
 
@@ -559,57 +556,20 @@ autoTable(doc,{
   1:{halign:"left"}
  },
 
-didParseCell:function(data){
+ didParseCell:function(data){
+  // debit rows light red reflection
+  if(data.column.index === 2 && data.cell.raw){
+   data.cell.styles.textColor=[200,0,0]
+   data.cell.styles.fillColor=[255,235,235]
+  }
 
- // View Bill hyperlink style
- if(
-  data.column.index === 2 &&
-  data.cell.raw === " 🔗 View Bill"
- ){
-  data.cell.styles.textColor = [0,0,255]
- }
-
- // debit
- if(data.column.index === 3 && data.cell.raw){
-  data.cell.styles.textColor=[200,0,0]
-  data.cell.styles.fillColor=[255,235,235]
- }
-
- // credit
- if(data.column.index === 4 && data.cell.raw){
-  data.cell.styles.textColor=[0,150,0]
-  data.cell.styles.fillColor=[235,255,235]
- }
-
-},
- didDrawCell:(data)=>{
-
- if(
-  data.column.index === 2 &&
-  data.cell.raw === "View Bill"
- ){
-
-  const link = attachmentLinks.find(
-   item => item.row === data.row.index
-  )
-
-  if(link){
-
-   doc.link(
-    data.cell.x,
-    data.cell.y,
-    data.cell.width,
-    data.cell.height,
-    {
-      url: link.url
-    }
-   )
-
+  // credit rows light green reflection
+  if(data.column.index === 3 && data.cell.raw){
+   data.cell.styles.textColor=[0,150,0]
+   data.cell.styles.fillColor=[235,255,235]
   }
 
  }
-
-}
 //url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`
 })
  // PAGE NUMBER
@@ -621,8 +581,38 @@ for(let i=1;i<=pageCount;i++){
 
  const pageHeight = doc.internal.pageSize.height
 
+ // LEFT SIDE ADVERTISEMENT
+// ADVERTISEMENT (bottom-left)
+doc.setFontSize(9)
 
+// first line
+doc.setTextColor(0,0,0)
+doc.text(
+ "Need a Website / App for your business?",
+ 10,
+ pageHeight - 12
+)
 
+// second line (WhatsApp style)
+doc.setTextColor(0,150,0)
+doc.setFont(undefined,"bold")
+
+const waText = "Click here to Chat on WhatsApp: +91 8053338585"
+
+doc.text(
+ waText,
+ 10,
+ pageHeight - 7
+)
+
+// clickable link
+doc.link(
+ 10,
+ pageHeight - 12,
+ 95,
+ 8,
+ {url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}` }
+)
 
 // reset color
 doc.setTextColor(0,0,0)
@@ -796,12 +786,7 @@ className="border p-2 w-full mb-2"
 value={description}
 onChange={e=>setDescription(e.target.value)}
 />
-<input
- type="file"
- accept=".pdf,.jpg,.jpeg,.png"
- className="border p-2 w-full mb-2"
- onChange={(e)=>setAttachment(e.target.files[0])}
-/>
+
 <select
 className="border p-2 w-full mb-2"
 value={type}
@@ -995,20 +980,7 @@ t.type==="credit"
 Balance: ₹{t.balance}
 
 </p>
-{t.attachmentUrl && (
 
-<a
- href={t.attachmentUrl}
- target="_blank"
- rel="noreferrer"
- className="bg-purple-600 text-white px-2 py-1 rounded text-xs inline-block mt-2"
->
-
-📎 View File
-
-</a>
-
-)}
 </div>
 <div className="flex gap-2">
 
