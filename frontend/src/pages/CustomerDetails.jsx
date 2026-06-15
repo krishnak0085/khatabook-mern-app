@@ -581,38 +581,38 @@ for(let i=1;i<=pageCount;i++){
 
  const pageHeight = doc.internal.pageSize.height
 
- // LEFT SIDE ADVERTISEMENT
-// ADVERTISEMENT (bottom-left)
-doc.setFontSize(9)
+//  // LEFT SIDE ADVERTISEMENT
+// // ADVERTISEMENT (bottom-left)
+// doc.setFontSize(9)
 
-// first line
-doc.setTextColor(0,0,0)
-doc.text(
- "Need a Website / App for your business?",
- 10,
- pageHeight - 12
-)
+// // first line
+// doc.setTextColor(0,0,0)
+// doc.text(
+//  "Need a Website / App for your business?",
+//  10,
+//  pageHeight - 12
+// )
 
-// second line (WhatsApp style)
-doc.setTextColor(0,150,0)
-doc.setFont(undefined,"bold")
+// // second line (WhatsApp style)
+// doc.setTextColor(0,150,0)
+// doc.setFont(undefined,"bold")
 
-const waText = "Click here to Chat on WhatsApp: +91 8053338585"
+// const waText = "Click here to Chat on WhatsApp: +91 8053338585"
 
-doc.text(
- waText,
- 10,
- pageHeight - 7
-)
+// doc.text(
+//  waText,
+//  10,
+//  pageHeight - 7
+// )
 
 // clickable link
-doc.link(
- 10,
- pageHeight - 12,
- 95,
- 8,
- {url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}` }
-)
+// doc.link(
+//  10,
+//  pageHeight - 12,
+//  95,
+//  8,
+//  {url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}` }
+// )
 
 // reset color
 doc.setTextColor(0,0,0)
