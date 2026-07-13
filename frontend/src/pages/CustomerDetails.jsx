@@ -774,6 +774,7 @@ Add Transaction
  onChange={(e)=>setDate(e.target.value)}
 />
 <input
+type="number"
 placeholder="Amount"
 className="border p-2 w-full mb-2"
 value={amount}
