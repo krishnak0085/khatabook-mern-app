@@ -23,7 +23,7 @@ useEffect(()=>{
 const loadCustomers = async()=>{
  try {
   const res = await axios.get(
-   `https://khatabook-mern-app-production.up.railway.app/api/customers/user/${userId}`
+   `https://khatabook-mern-app-azew.onrender.com/api/customers/user/${userId}`
   )
 
   // reverse once (latest first)
@@ -53,7 +53,7 @@ const addCustomer = async()=>{
 
  try{
   const res = await axios.post(
-   "https://khatabook-mern-app-production.up.railway.app/api/customers",
+   "https://khatabook-mern-app-azew.onrender.com/api/customers",
    {name,phone,userId}
   )
 
@@ -72,7 +72,7 @@ const deleteCustomer = async(id)=>{
 
  try{
   await axios.delete(
-   `https://khatabook-mern-app-production.up.railway.app/api/customers/${id}`,
+   `https://khatabook-mern-app-azew.onrender.com/api/customers/${id}`,
    { data:{ userId } }
   )
 
