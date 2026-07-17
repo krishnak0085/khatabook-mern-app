@@ -14,7 +14,7 @@ export default function Login(){
   e.preventDefault()
 
   const res = await axios.post(
-   "https://khatabook-mern-app-production.up.railway.app/api/auth/login",
+   "https://khatabook-mern-app-azew.onrender.com/api/auth/login",
    {email,password}
   )
 
