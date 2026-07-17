@@ -55,7 +55,7 @@ const loadCustomer = async()=>{
  try{
 
  const res = await axios.get(
-  `https://khatabook-mern-app.onrender.com/api/customers/${id}?userId=${userId}`)
+  `https://khatabook-mern-app-production.up.railway.app/api/customers/${id}?userId=${userId}`)
 
  setCustomer(res.data)
 
@@ -72,7 +72,7 @@ const loadTransactions = async()=>{
  setLoading(true)
 
  const res = await axios.get(
- `https://khatabook-mern-app.onrender.com/api/transactions/${id}/${userId}?page=${page}&limit=10`
+ `https://khatabook-mern-app-production.up.railway.app/api/transactions/${id}/${userId}?page=${page}&limit=10`
 )
 
  const sorted = res.data.sort(
@@ -109,7 +109,7 @@ const saveTransaction = async()=>{
   if(editingId){
 
    const res = await axios.put(
-    `https://khatabook-mern-app.onrender.com/api/transactions/${editingId}`,
+    `https://khatabook-mern-app-production.up.railway.app/api/transactions/${editingId}`,
     {
      amount:Number(amount),
      type,
@@ -131,7 +131,7 @@ const saveTransaction = async()=>{
   }else{
 
    const res = await axios.post(
-    "https://khatabook-mern-app.onrender.com/api/transactions",
+    "https://khatabook-mern-app-production.up.railway.app/api/transactions",
     {
      customerId:id,
      amount:Number(amount),
@@ -169,7 +169,7 @@ const deleteTransaction = async(tid)=>{
  try{
 
   await axios.delete(
-   `https://khatabook-mern-app.onrender.com/api/transactions/${tid}`,
+   `https://khatabook-mern-app-production.up.railway.app/api/transactions/${tid}`,
    { data:{ userId } }
   )
 
