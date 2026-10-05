@@ -681,33 +681,87 @@ return doc
 // WHATSAPP SHARE
 // =========================
 
-const shareWhatsApp = async () => {
+// const shareWhatsApp = async () => {
 
- if(!customer) return
+//  if(!customer) return
 
- const doc = await generatePDF()
+//  const doc = await generatePDF()
 
- const pdfBlob = doc.output("blob")
+//  const pdfBlob = doc.output("blob")
 
- const file = new File(
-  [pdfBlob],
-  `${customer.name}-statement.pdf`,
-  { type: "application/pdf" }
- )
+//  const file = new File(
+//   [pdfBlob],
+//   `${customer.name}-statement.pdf`,
+//   { type: "application/pdf" }
+//  )
 
- const url = URL.createObjectURL(file)
+//  const url = URL.createObjectURL(file)
 
- const msg =
- `Ledger statement for ${customer.name}.
- Please download the PDF from the link below:
+//  const msg =
+//  `Ledger statement for ${customer.name}.
+//  Please download the PDF from the link below:
 
- ${url}`
+//  ${url}`
 
- window.open(
-  `https://wa.me/?text=${encodeURIComponent(msg)}`,
-  "_blank"
- )
+//  window.open(
+//   `https://wa.me/?text=${encodeURIComponent(msg)}`,
+//   "_blank"
+//  )
 
+// }
+
+ const shareWhatsApp = async () => {
+
+  if (!customer) return
+
+  const doc = await generatePDF()
+
+  if (!doc) return
+
+  const pdfBlob = doc.output("blob")
+
+  const file = new File(
+    [pdfBlob],
+    `${customer.name}-statement.pdf`,
+    {
+      type: "application/pdf"
+    }
+  )
+
+  if (
+    navigator.share &&
+    navigator.canShare &&
+    navigator.canShare({ files: [file] })
+  ) {
+
+    try {
+
+      await navigator.share({
+        title: `${customer.name} Ledger Statement`,
+        text: `Ledger statement for ${customer.name}`,
+        files: [file]
+      })
+
+    } catch (err) {
+
+      if (err.name !== "AbortError") {
+        console.error("Share failed:", err)
+      }
+
+    }
+
+  } else {
+
+    // Desktop / unsupported browser
+    const url = URL.createObjectURL(pdfBlob)
+
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${customer.name}-statement.pdf`
+    a.click()
+
+    URL.revokeObjectURL(url)
+  }
 }
 // =========================
 // UI
