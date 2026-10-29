@@ -849,11 +849,11 @@ const tableRows = data.map((t) => {
 }).join("");
 
   container.innerHTML = `
-    <div style="text-align:center; margin-bottom:24px;">
+    <div style="text-align:center; margin-bottom:4px;">
       <h1 style="margin:0 0 12px; font-size:28px;">
         ${customer.name} - Ledger Statement
       </h1>
-      <h3 style="margin:0; color:${netBalance < 0 ? "#dc2626" : "#15803d"};">
+      <h3 style="margin:0 0 0; color:${netBalance < 0 ? "#dc2626" : "#15803d"};">
   ${balanceMessage}
 </h3>
    
