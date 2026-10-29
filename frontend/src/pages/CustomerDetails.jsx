@@ -892,9 +892,7 @@ const tableRows = data.map((t) => {
           <th style="padding:12px; border:1px solid #ddd;">Balance</th>
         </tr>
       </thead>
-      <tbody>
-        ${data.map(t => `
-          <tr>
+ 
            
 <tbody>
   <tr style="background:#f1f5f9; font-weight:bold;">
