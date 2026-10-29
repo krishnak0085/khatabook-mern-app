@@ -745,13 +745,13 @@ const generateImage = async (limit) => {
     box-sizing: border-box;
   `;
 
-  const totalCredit = data
-    .filter(t => t.type === "credit")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  // const totalCredit = data
+  //   .filter(t => t.type === "credit")
+  //   .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const totalDebit = data
-    .filter(t => t.type === "debit")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  // const totalDebit = data
+  //   .filter(t => t.type === "debit")
+  //   .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const balanceMessage =
     totalCredit > totalDebit
