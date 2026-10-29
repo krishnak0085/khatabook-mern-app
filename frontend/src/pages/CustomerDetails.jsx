@@ -709,7 +709,139 @@ return doc
 //  )
 
 // }
+// download entries as a image 
 
+const generateImage = async (limit) => {
+  if (!transactions.length || !customer) {
+    alert("No transactions available");
+    return;
+  }
+
+  const html2canvas = (await import("html2canvas")).default;
+
+  // Get the latest N entries
+  let data = [...ledger].sort((a, b) => {
+    const dateDiff = new Date(b.date) - new Date(a.date);
+    if (dateDiff !== 0) return dateDiff;
+    return b._id.localeCompare(a._id);
+  });
+
+  data = data.slice(0, Number(limit));
+
+  // Display entries oldest to newest
+  data.reverse();
+
+  const container = document.createElement("div");
+
+  container.style.cssText = `
+    position: fixed;
+    left: -10000px;
+    top: 0;
+    width: 750px;
+    padding: 30px;
+    background: white;
+    color: #1e293b;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+  `;
+
+  const totalCredit = data
+    .filter(t => t.type === "credit")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const totalDebit = data
+    .filter(t => t.type === "debit")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const balanceMessage =
+    totalCredit > totalDebit
+      ? `${customer.name} will give you Rs. ${totalCredit - totalDebit}`
+      : totalDebit > totalCredit
+      ? `You will give ${customer.name} Rs. ${totalDebit - totalCredit}`
+      : "Balance Settled";
+
+  container.innerHTML = `
+    <div style="text-align:center; margin-bottom:24px;">
+      <h1 style="margin:0 0 12px; font-size:28px;">
+        ${customer.name} - Ledger Statement
+      </h1>
+      <h3 style="margin:0; color:#15803d;">
+        ${balanceMessage}
+      </h3>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-bottom:22px;">
+      <div style="flex:1; padding:15px; background:#dcfce7; border-radius:8px;">
+        <b>Total Credit</b>
+        <h3>₹${totalCredit}</h3>
+      </div>
+      <div style="flex:1; padding:15px; background:#fee2e2; border-radius:8px;">
+        <b>Total Debit</b>
+        <h3>₹${totalDebit}</h3>
+      </div>
+    </div>
+
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <thead>
+        <tr style="background:#1e293b; color:white;">
+          <th style="padding:12px; border:1px solid #ddd;">Date</th>
+          <th style="padding:12px; border:1px solid #ddd;">Description</th>
+          <th style="padding:12px; border:1px solid #ddd;">Type</th>
+          <th style="padding:12px; border:1px solid #ddd;">Amount</th>
+          <th style="padding:12px; border:1px solid #ddd;">Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map(t => `
+          <tr>
+            <td style="padding:10px; border:1px solid #ddd;">
+              ${new Date(t.date).toLocaleDateString("en-GB")}
+            </td>
+            <td style="padding:10px; border:1px solid #ddd;">
+              ${String(t.description || "-").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+            </td>
+            <td style="padding:10px; border:1px solid #ddd; color:${t.type === "credit" ? "#15803d" : "#dc2626"};">
+              ${t.type.toUpperCase()}
+            </td>
+            <td style="padding:10px; border:1px solid #ddd;">
+              ₹${t.amount}
+            </td>
+            <td style="padding:10px; border:1px solid #ddd;">
+              ₹${t.balance}
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+
+    <p style="text-align:center; margin-top:24px; color:#64748b;">
+      Generated from Customer Ledger
+    </p>
+  `;
+
+  document.body.appendChild(container);
+
+  try {
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      backgroundColor: "#ffffff"
+    });
+
+    const link = document.createElement("a");
+    link.download = `${customer.name}-last-${limit}-entries.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch (error) {
+    console.error("Image generation failed:", error);
+    alert("Unable to generate image. Please try again.");
+  } finally {
+    container.remove();
+  }
+};
+
+
+
+ 
  const shareWhatsApp = async () => {
 
   if (!customer) return
@@ -862,10 +994,18 @@ onChange={(e)=>setType(e.target.value)}
 
 <select
  className="border p-2 rounded"
- onChange={(e)=>{
-  const value = e.target.value
-  if(value) generatePDF(value)
+ 
+onChange={(e) => {
+  const value = e.target.value;
+  if (!value) return;
+
+  if (["1", "2", "3", "4", "5"].includes(value)) {
+    generateImage(value);
+  } else {
+    generatePDF(value);
+  }
 }}
+
 >
 
 <option value="">Download Statement</option>
