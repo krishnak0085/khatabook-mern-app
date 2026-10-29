@@ -853,12 +853,21 @@ const tableRows = data.map((t) => {
       <h1 style="margin:0 0 12px; font-size:28px;">
         ${customer.name} - Ledger Statement
       </h1>
-      <h3 style="margin:0 0 0; color:${netBalance < 0 ? "#dc2626" : "#15803d"};">
+    <h3 style="
+  margin:0;
+  padding-bottom:20px;
+  line-height:1.5;
+  color:${netBalance < 0 ? "#dc2626" : "#15803d"};
+">
   ${balanceMessage}
 </h3>
    
-    <table style="width:100%; border-collapse:collapse; font-size:14px;">
-      <thead>
+<table style="
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+  margin-top:0;
+">      <thead>
         <tr style="background:#1e293b; color:white;">
           <th style="padding:12px; border:1px solid #ddd;">Date</th>
           <th style="padding:12px; border:1px solid #ddd;">Description</th>
