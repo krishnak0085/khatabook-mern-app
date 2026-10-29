@@ -731,6 +731,57 @@ const generateImage = async (limit) => {
   // Display entries oldest to newest
   data.reverse();
 
+  // All available ledger entries: oldest to newest
+  const allData = [...ledger].sort((a, b) => {
+    const diff = new Date(a.date) - new Date(b.date);
+    return diff !== 0 ? diff : a._id.localeCompare(b._id);
+  });
+
+  // Selected entries are already reversed to oldest -> newest
+  const firstEntry = data[0];
+
+  if (!firstEntry) {
+    alert("No entries available");
+    return;
+  }
+
+  // Calculate balance before the first selected entry
+  let openingBalance = 0;
+
+  allData.forEach((t) => {
+    const diff = new Date(t.date) - new Date(firstEntry.date);
+
+    const isEarlier =
+      diff < 0 ||
+      (diff === 0 && t._id.localeCompare(firstEntry._id) < 0);
+
+    if (isEarlier) {
+      openingBalance +=
+        t.type === "credit"
+          ? Number(t.amount)
+          : -Number(t.amount);
+    }
+  });
+
+  // Selected entries totals
+  const totalCredit = data
+    .filter(t => t.type === "credit")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const totalDebit = data
+    .filter(t => t.type === "debit")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  // Final balance includes opening balance
+  const netBalance = openingBalance + totalCredit - totalDebit;
+
+  const balanceMessage =
+    netBalance > 0
+      ? `${customer.name} will give you Rs. ${netBalance}`
+      : netBalance < 0
+      ? `You will give ${customer.name} Rs. ${Math.abs(netBalance)}`
+      : "Balance Settled";
+
   const container = document.createElement("div");
 
   container.style.cssText = `
@@ -745,29 +796,88 @@ const generateImage = async (limit) => {
     box-sizing: border-box;
   `;
 
-  const totalCredit = data
-    .filter(t => t.type === "credit")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  // const totalCredit = data
+  //   .filter(t => t.type === "credit")
+  //   .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const totalDebit = data
-    .filter(t => t.type === "debit")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  // const totalDebit = data
+  //   .filter(t => t.type === "debit")
+  //   .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const balanceMessage =
-    totalCredit > totalDebit
-      ? `${customer.name} will give you Rs. ${totalCredit - totalDebit}`
-      : totalDebit > totalCredit
-      ? `You will give ${customer.name} Rs. ${totalDebit - totalCredit}`
-      : "Balance Settled";
+  // const balanceMessage =
+  //   totalCredit > totalDebit
+  //     ? `${customer.name} will give you Rs. ${totalCredit - totalDebit}`
+  //     : totalDebit > totalCredit
+  //     ? `You will give ${customer.name} Rs. ${totalDebit - totalCredit}`
+  //     : "Balance Settled";
+
+let runningBalance = openingBalance;
+
+const tableRows = data.map((t) => {
+  const amount = Number(t.amount) || 0;
+
+  if (t.type === "credit") {
+    runningBalance += amount;
+  } else {
+    runningBalance -= amount;
+  }
+
+  const safeDescription = String(t.description || "-")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  return `
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd;">
+        ${new Date(t.date).toLocaleDateString("en-GB")}
+      </td>
+      <td style="padding:10px; border:1px solid #ddd;">
+        ${safeDescription}
+      </td>
+      <td style="padding:10px; border:1px solid #ddd; color:${t.type === "credit" ? "#15803d" : "#dc2626"};">
+        ${t.type.toUpperCase()}
+      </td>
+      <td style="padding:10px; border:1px solid #ddd;">
+        ₹${amount}
+      </td>
+      <td style="padding:10px; border:1px solid #ddd;">
+        ₹${runningBalance}
+      </td>
+    </tr>
+  `;
+}).join("");
 
   container.innerHTML = `
     <div style="text-align:center; margin-bottom:24px;">
       <h1 style="margin:0 0 12px; font-size:28px;">
         ${customer.name} - Ledger Statement
       </h1>
-      <h3 style="margin:0; color:#15803d;">
-        ${balanceMessage}
-      </h3>
+      <h3 style="margin:0; color:${netBalance < 0 ? "#dc2626" : "#15803d"};">
+  ${balanceMessage}
+</h3>
+      
+<div style="display:flex; gap:12px; margin:20px 0;">
+  <div style="flex:1; padding:15px; background:#e2e8f0; border-radius:8px;">
+    <b>Opening Balance</b>
+    <h3>₹${openingBalance}</h3>
+  </div>
+
+  <div style="flex:1; padding:15px; background:#dcfce7; border-radius:8px;">
+    <b>Total Credit</b>
+    <h3>₹${totalCredit}</h3>
+  </div>
+
+  <div style="flex:1; padding:15px; background:#fee2e2; border-radius:8px;">
+    <b>Total Debit</b>
+    <h3>₹${totalDebit}</h3>
+  </div>
+</div>
+
+<p style="font-size:18px; font-weight:bold; margin-bottom:20px;">
+  Closing Balance: ₹${netBalance}
+</p>
+
     </div>
 
    
@@ -785,24 +895,25 @@ const generateImage = async (limit) => {
       <tbody>
         ${data.map(t => `
           <tr>
-            <td style="padding:10px; border:1px solid #ddd;">
-              ${new Date(t.date).toLocaleDateString("en-GB")}
-            </td>
-            <td style="padding:10px; border:1px solid #ddd;">
-              ${String(t.description || "-").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
-            </td>
-            <td style="padding:10px; border:1px solid #ddd; color:${t.type === "credit" ? "#15803d" : "#dc2626"};">
-              ${t.type.toUpperCase()}
-            </td>
-            <td style="padding:10px; border:1px solid #ddd;">
-              ₹${t.amount}
-            </td>
-            <td style="padding:10px; border:1px solid #ddd;">
-              ₹${t.balance}
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
+           
+<tbody>
+  <tr style="background:#f1f5f9; font-weight:bold;">
+    <td style="padding:10px; border:1px solid #ddd;">
+      ${new Date(firstEntry.date).toLocaleDateString("en-GB")}
+    </td>
+    <td style="padding:10px; border:1px solid #ddd;">
+      Opening Balance
+    </td>
+    <td style="padding:10px; border:1px solid #ddd;">-</td>
+    <td style="padding:10px; border:1px solid #ddd;">-</td>
+    <td style="padding:10px; border:1px solid #ddd;">
+      ₹${openingBalance}
+    </td>
+  </tr>
+
+  ${tableRows}
+</tbody>
+
     </table>
 
     <p style="text-align:center; margin-top:24px; color:#64748b;">
