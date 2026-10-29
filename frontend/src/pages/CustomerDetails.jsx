@@ -745,13 +745,13 @@ const generateImage = async (limit) => {
     box-sizing: border-box;
   `;
 
-  // const totalCredit = data
-  //   .filter(t => t.type === "credit")
-  //   .reduce((sum, t) => sum + Number(t.amount), 0);
+  const totalCredit = data
+    .filter(t => t.type === "credit")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  // const totalDebit = data
-  //   .filter(t => t.type === "debit")
-  //   .reduce((sum, t) => sum + Number(t.amount), 0);
+  const totalDebit = data
+    .filter(t => t.type === "debit")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const balanceMessage =
     totalCredit > totalDebit
@@ -770,16 +770,16 @@ const generateImage = async (limit) => {
       </h3>
     </div>
 
-    <div style="display:flex; gap:12px; margin-bottom:22px;">
-      <div style="flex:1; padding:15px; background:#dcfce7; border-radius:8px;">
-        <b>Total Credit</b>
-        <h3>₹${totalCredit}</h3>
-      </div>
-      <div style="flex:1; padding:15px; background:#fee2e2; border-radius:8px;">
-        <b>Total Debit</b>
-        <h3>₹${totalDebit}</h3>
-      </div>
-    </div>
+    // <div style="display:flex; gap:12px; margin-bottom:22px;">
+    //   <div style="flex:1; padding:15px; background:#dcfce7; border-radius:8px;">
+    //     <b>Total Credit</b>
+    //     <h3>₹${totalCredit}</h3>
+    //   </div>
+    //   <div style="flex:1; padding:15px; background:#fee2e2; border-radius:8px;">
+    //     <b>Total Debit</b>
+    //     <h3>₹${totalDebit}</h3>
+    //   </div>
+    // </div>
 
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
       <thead>
@@ -827,10 +827,62 @@ const generateImage = async (limit) => {
       backgroundColor: "#ffffff"
     });
 
-    const link = document.createElement("a");
-    link.download = `${customer.name}-last-${limit}-entries.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    
+const blob = await new Promise((resolve) =>
+  canvas.toBlob(resolve, "image/png")
+);
+
+if (!blob) {
+  throw new Error("Could not create image");
+}
+
+const file = new File(
+  [blob],
+  `${customer.name}-last-${limit}-entries.png`,
+  { type: "image/png" }
+);
+
+// 1. Automatically download the image
+const url = URL.createObjectURL(blob);
+const link = document.createElement("a");
+
+link.href = url;
+link.download = file.name;
+document.body.appendChild(link);
+link.click();
+link.remove();
+
+// 2. Open the native share sheet for WhatsApp sharing
+if (
+  navigator.share &&
+  navigator.canShare &&
+  navigator.canShare({ files: [file] })
+) {
+  try {
+    await navigator.share({
+      title: `${customer.name} Ledger Statement`,
+      text: `Ledger statement: ${customer.name}`,
+      files: [file]
+    });
+  } catch (error) {
+    if (error.name !== "AbortError") {
+      console.error("Sharing failed:", error);
+    }
+  }
+} else {
+  // Fallback: open WhatsApp with a message.
+  // The downloaded image must be attached manually.
+  window.open(
+    `https://wa.me/?text=${encodeURIComponent(
+      `Ledger statement for ${customer.name}. Please find the attached image.`
+    )}`,
+    "_blank"
+  );
+}
+
+// Release the temporary download URL later.
+setTimeout(() => URL.revokeObjectURL(url), 60000);
+
   } catch (error) {
     console.error("Image generation failed:", error);
     alert("Unable to generate image. Please try again.");
