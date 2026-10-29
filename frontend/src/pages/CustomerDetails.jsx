@@ -856,32 +856,7 @@ const tableRows = data.map((t) => {
       <h3 style="margin:0; color:${netBalance < 0 ? "#dc2626" : "#15803d"};">
   ${balanceMessage}
 </h3>
-      
-<div style="display:flex; gap:12px; margin:20px 0;">
-  <div style="flex:1; padding:15px; background:#e2e8f0; border-radius:8px;">
-    <b>Opening Balance</b>
-    <h3>₹${openingBalance}</h3>
-  </div>
-
-  <div style="flex:1; padding:15px; background:#dcfce7; border-radius:8px;">
-    <b>Total Credit</b>
-    <h3>₹${totalCredit}</h3>
-  </div>
-
-  <div style="flex:1; padding:15px; background:#fee2e2; border-radius:8px;">
-    <b>Total Debit</b>
-    <h3>₹${totalDebit}</h3>
-  </div>
-</div>
-
-<p style="font-size:18px; font-weight:bold; margin-bottom:20px;">
-  Closing Balance: ₹${netBalance}
-</p>
-
-    </div>
-
    
-
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
       <thead>
         <tr style="background:#1e293b; color:white;">
