@@ -770,16 +770,7 @@ const generateImage = async (limit) => {
       </h3>
     </div>
 
-    // <div style="display:flex; gap:12px; margin-bottom:22px;">
-    //   <div style="flex:1; padding:15px; background:#dcfce7; border-radius:8px;">
-    //     <b>Total Credit</b>
-    //     <h3>₹${totalCredit}</h3>
-    //   </div>
-    //   <div style="flex:1; padding:15px; background:#fee2e2; border-radius:8px;">
-    //     <b>Total Debit</b>
-    //     <h3>₹${totalDebit}</h3>
-    //   </div>
-    // </div>
+   
 
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
       <thead>
